@@ -12,10 +12,10 @@ export interface AppConfig {
 
 export const appsConfig: Record<string, AppConfig> = {
   vscode: {
-    name: 'VSCode',
+    name: 'Visual Studio Code',
     adapter: vscodeAdapter,
     searchBarPlaceholder: 'Search recent projects for Visual Studio Code...',
-    openTitle: 'Open in VSCode',
+    openTitle: 'Open in Visual Studio Code',
     openIcon: 'icons/vscode.png',
   },
   cursor: {

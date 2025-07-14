@@ -23,7 +23,7 @@ export function AppView({
   showFavoritesFirst = false,
 }: AppViewProps) {
   const {
-    projects: recentProjects,
+    projects,
     isLoading,
     handleCopyPath,
     handleOpenProject,
@@ -32,15 +32,15 @@ export function AppView({
   const {
     isFavorite,
     toggleFavorite,
-  } = useFavorites(appName)
+  } = useFavorites()
 
   // 合并最近项目和收藏状态
   const enhancedProjects = useMemo(() => {
-    return recentProjects.map((project: Project) => ({
+    return projects.map((project: Project) => ({
       ...project,
-      isFavorite: isFavorite(project.path),
+      isFavorite: isFavorite(appName, project.path),
     }))
-  }, [recentProjects, isFavorite])
+  }, [projects, isFavorite, appName])
 
   // 根据设置排序项目（收藏夹优先或正常顺序）
   const sortedProjects = useMemo(() => {
@@ -57,8 +57,8 @@ export function AppView({
   // 处理收藏夹切换
   const handleToggleFavorite = useCallback(async (project: Project) => {
     try {
-      await toggleFavorite(project)
-      const action = isFavorite(project.path) ? 'removed from' : 'added to'
+      await toggleFavorite(appName, project.path)
+      const action = isFavorite(appName, project.path) ? 'removed from' : 'added to'
       await showToast({
         style: Toast.Style.Success,
         title: `Project ${action} favorites`,
@@ -72,7 +72,7 @@ export function AppView({
         message: error instanceof Error ? error.message : 'Unknown error occurred',
       })
     }
-  }, [toggleFavorite, isFavorite])
+  }, [toggleFavorite, isFavorite, appName])
 
   return (
     <RecentProjectsList

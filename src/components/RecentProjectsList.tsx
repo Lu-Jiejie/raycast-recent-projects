@@ -1,7 +1,6 @@
 import type { Project } from '../types'
 import { exec } from 'node:child_process'
 import fs from 'node:fs'
-import path from 'node:path'
 import { Action, ActionPanel, Icon, List } from '@raycast/api'
 import { useMemo, useState } from 'react'
 
