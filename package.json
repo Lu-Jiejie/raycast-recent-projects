@@ -15,21 +15,30 @@
   "icon": "icon.png",
   "commands": [
     {
-      "name": "command-name",
-      "title": "Command Title",
-      "description": "Command description.",
-      "mode": "view"
-    }
-  ],
-  "preferences": [
-    {
-      "name": "preference-name",
-      "title": "Preference Title",
-      "description": "Preference description.",
-      "type": "textfield",
-      "defaultValue": "default-value",
-      "placeholder": "placeholder-text",
-      "required": true
+      "name": "vscode",
+      "title": "Visual Studio Code",
+      "description": "Quickly open recent projects in Visual Studio Code.",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "vscodeStoragePath",
+          "title": "VSCode Storage Path",
+          "description": "Path to VSCode recent projects storage file.",
+          "type": "textfield",
+          "default": "",
+          "placeholder": "C:/Users/USER_NAME/AppData/Roaming/Code/storage.json",
+          "required": true
+        },
+        {
+          "name": "vscodeExePath",
+          "title": "VSCode Executable Path",
+          "description": "Path to VSCode code.exe executable.",
+          "type": "textfield",
+          "default": "",
+          "placeholder": "C:/Program Files/Microsoft VS Code/code.exe",
+          "required": true
+        }
+      ]
     }
   ],
   "scripts": {
