@@ -9,3 +9,7 @@ lib-cov
 logs
 node_modules
 temp
+docs
+docs-zh
+raycast-env.d.ts
+
