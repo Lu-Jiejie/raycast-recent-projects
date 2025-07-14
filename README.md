@@ -1,10 +1,5 @@
 <p align="center">
-  <img src="./assets/icon.png" alt="Recent Projects Icon" height="140" style="
-  background-color: #ebebebff;
-  border: 1px solid #dadadaff;
-  border-radius: 30px;
-  padding: 5px;
-">
+  <img src="./assets/icon-readme.png" alt="Recent Projects Icon" height="140">
 </p>
 
 <h1 align="center">
