@@ -10,11 +10,13 @@ interface RecentProjectsListProps {
   isLoading: boolean
   onOpen: (item: Project) => void
   onCopy: (item: Project) => void
+  onToggleFavorite?: (item: Project) => void
   searchBarPlaceholder?: string
   emptyTitle?: string
   emptyDescription?: string
   sectionTitle?: string
   openTitle?: string
+  openIcon?: string
   copyTitle?: string
 }
 
@@ -35,11 +37,13 @@ export function RecentProjectsList({
   isLoading,
   onOpen,
   onCopy,
+  onToggleFavorite,
   searchBarPlaceholder = 'Search recent projects...',
   emptyTitle = 'No projects found',
   emptyDescription = 'No recent projects or no matches',
   sectionTitle = 'Project Actions',
   openTitle = 'Open in App',
+  openIcon = Icon.Code,
   copyTitle = 'Copy Project Path',
 }: RecentProjectsListProps) {
   const [searchText, setSearchText] = useState('')
@@ -48,7 +52,7 @@ export function RecentProjectsList({
     if (!searchText)
       return projects
     const searchLower = searchText.toLowerCase()
-    return projects.filter(item =>
+    return projects.filter((item: Project) =>
       item.name.toLowerCase().includes(searchLower)
       || item.path.toLowerCase().includes(searchLower),
     )
@@ -70,7 +74,7 @@ export function RecentProjectsList({
             />
           )
         : (
-            filteredItems.map(item => (
+            filteredItems.map((item: Project) => (
               <List.Item
                 key={item.path}
                 icon={item.icon || Icon.Document}
@@ -81,9 +85,16 @@ export function RecentProjectsList({
                     <ActionPanel.Section title={sectionTitle}>
                       <Action
                         title={openTitle}
-                        icon={Icon.Code}
+                        icon={openIcon}
                         onAction={() => onOpen(item)}
                       />
+                      {onToggleFavorite && (
+                        <Action
+                          title={item.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                          icon={item.isFavorite ? Icon.StarDisabled : Icon.Star}
+                          onAction={() => onToggleFavorite(item)}
+                        />
+                      )}
                       <Action
                         title="Open in Explorer"
                         icon={Icon.Folder}

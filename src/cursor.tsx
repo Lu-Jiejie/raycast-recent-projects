@@ -2,7 +2,7 @@ import { appsConfig } from './adapters'
 import { AppView } from './components/AppView'
 
 export default function Command() {
-  const config = appsConfig.vscode
+  const config = appsConfig.cursor
 
   return (
     <AppView
