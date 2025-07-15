@@ -10,6 +10,8 @@ Recent Projects
 A Raycast extension for quickly accessing your recent projects.
 </p>
 
+<img width="862" src="./assets/example.png">
+
 > [!IMPORTANT]
 > This extension is totally for Windows users.
 
