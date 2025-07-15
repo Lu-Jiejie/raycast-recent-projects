@@ -1,9 +1,12 @@
+import type { Project } from '../types'
 import { LocalStorage } from '@raycast/api'
 import { useCallback, useEffect, useState } from 'react'
 
 export interface FavoriteItem {
   appName: string
+  name: string
   path: string
+  icon: string
 }
 
 export function useFavorites() {
@@ -54,11 +57,13 @@ export function useFavorites() {
     return allFavorites.some(item => item.appName === appName && item.path === path)
   }, [allFavorites])
 
-  const addToFavorites = useCallback(async (appName: string, path: string) => {
-    if (!isFavorite(appName, path)) {
+  const addToFavorites = useCallback(async (project: Project) => {
+    if (!isFavorite(project.appName, project.path)) {
       const newFavoriteItem: FavoriteItem = {
-        appName,
-        path,
+        name: project.name,
+        appName: project.appName,
+        path: project.path,
+        icon: project.icon,
       }
       const newFavorites = [newFavoriteItem, ...allFavorites]
       await saveFavorites(newFavorites)
@@ -72,12 +77,12 @@ export function useFavorites() {
     await saveFavorites(newFavorites)
   }, [allFavorites, saveFavorites])
 
-  const toggleFavorite = useCallback(async (appName: string, path: string) => {
-    if (isFavorite(appName, path)) {
-      await removeFromFavorites(appName, path)
+  const toggleFavorite = useCallback(async (project: Project) => {
+    if (isFavorite(project.appName, project.path)) {
+      await removeFromFavorites(project.appName, project.path)
     }
     else {
-      await addToFavorites(appName, path)
+      await addToFavorites(project)
     }
   }, [isFavorite, addToFavorites, removeFromFavorites])
 

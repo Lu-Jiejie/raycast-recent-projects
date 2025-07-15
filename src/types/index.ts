@@ -1,6 +1,7 @@
 export interface Project {
   name: string
   path: string
-  icon?: string
+  appName: string
+  icon: string
   isFavorite?: boolean
 }

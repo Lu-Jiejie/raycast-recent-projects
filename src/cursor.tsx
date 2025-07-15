@@ -1,15 +1,3 @@
-import { appsConfig } from './adapters'
-import { AppView } from './components/AppView'
+import { createAppCommand } from './components/createAppCommand'
 
-export default function Command() {
-  const config = appsConfig.cursor
-
-  return (
-    <AppView
-      adapter={config.adapter}
-      searchBarPlaceholder={config.searchBarPlaceholder}
-      openTitle={config.openTitle}
-      openIcon={config.openIcon}
-    />
-  )
-}
+export default createAppCommand('cursor')

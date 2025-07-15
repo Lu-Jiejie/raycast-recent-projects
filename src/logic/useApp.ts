@@ -1,7 +1,7 @@
 import type { Adapter } from '../adapters'
 import type { Project } from '../types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { showErrorToast, showSuccessToast } from '.'
+import { showErrorToast, showSuccessToast, withErrorHandling } from '.'
 import { useFavorites } from './useFavorites'
 
 export function useApp(adapter: Adapter) {
@@ -17,17 +17,13 @@ export function useApp(adapter: Adapter) {
     async function fetchProjects() {
       setIsLoading(true)
 
-      try {
-        const data = adapter.getRecentProjects()
-        setRawProjects(data)
-      }
-      catch (error) {
-        await showErrorToast('Failed to Load Projects', error instanceof Error ? error.message : 'Unknown error occurred')
-        setRawProjects([])
-      }
-      finally {
-        setIsLoading(false)
-      }
+      const data = await withErrorHandling(
+        () => adapter.getRecentProjects(),
+        'Failed to Load Projects',
+      )
+
+      setRawProjects(data || [])
+      setIsLoading(false)
     }
 
     fetchProjects()
@@ -44,55 +40,54 @@ export function useApp(adapter: Adapter) {
       }
     }
 
-    // 合并收藏状态
+    // 合并收藏状态并按收藏状态分组
     const enhancedProjects = rawProjects.map(project => ({
       ...project,
       isFavorite: isFavorite(adapter.appName, project.path),
     }))
 
-    // 分组
-    const favorites: Project[] = []
-    const regulars: Project[] = []
-
-    enhancedProjects.forEach((project) => {
-      if (project.isFavorite) {
-        favorites.push(project)
-      }
-      else {
-        regulars.push(project)
-      }
-    })
+    const [favoriteProjects, regularProjects] = enhancedProjects.reduce<[Project[], Project[]]>(
+      ([favorites, regulars], project) => {
+        return project.isFavorite
+          ? [[...favorites, project], regulars]
+          : [favorites, [...regulars, project]]
+      },
+      [[], []],
+    )
 
     return {
-      favoriteProjects: favorites,
-      regularProjects: regulars,
+      favoriteProjects,
+      regularProjects,
       isReady: true,
     }
   }, [rawProjects, isFavorite, adapter.appName, favoritesLoading])
 
-  const handleCopyPath = useCallback(async (item: Project) => {
-    await showSuccessToast('Copied Project Path', item.path)
-  }, [])
-
   const handleOpenProject = useCallback(async (item: Project) => {
-    try {
-      adapter.openProject(item.path)
+    const success = await withErrorHandling(
+      async () => {
+        adapter.openProject(item.path)
+        return true
+      },
+      'Open Failed',
+    )
+
+    if (success) {
       await showSuccessToast(`Opened in ${adapter.appName}`, item.name)
-    }
-    catch (error) {
-      await showErrorToast('Open Failed', error instanceof Error ? error.message : 'Unknown error occurred')
     }
   }, [adapter])
 
   const handleToggleFavorite = useCallback(async (project: Project) => {
-    try {
-      const wasAlreadyFavorite = isFavorite(adapter.appName, project.path)
-      await toggleFavorite(adapter.appName, project.path)
-      const action = wasAlreadyFavorite ? 'removed from' : 'added to'
-      await showSuccessToast(`Project ${action} favorites`, project.name)
-    }
-    catch (error) {
-      await showErrorToast('Failed to update favorites', error instanceof Error ? error.message : 'Unknown error occurred')
+    const success = await withErrorHandling(
+      async () => {
+        const wasAlreadyFavorite = isFavorite(adapter.appName, project.path)
+        await toggleFavorite(project)
+        return wasAlreadyFavorite ? 'removed from' : 'added to'
+      },
+      'Failed to update favorites',
+    )
+
+    if (success) {
+      await showSuccessToast(`Project ${success} favorites`, project.name)
     }
   }, [isFavorite, toggleFavorite, adapter.appName])
 
@@ -100,7 +95,6 @@ export function useApp(adapter: Adapter) {
     favoriteProjects: groupedProjects.favoriteProjects,
     regularProjects: groupedProjects.regularProjects,
     isLoading: isLoading || favoritesLoading || !groupedProjects.isReady,
-    handleCopyPath,
     handleOpenProject,
     handleToggleFavorite,
   }

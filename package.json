@@ -15,6 +15,12 @@
   "icon": "icon.png",
   "commands": [
     {
+      "name": "favorites",
+      "title": "Favorites",
+      "description": "Manage your favorite projects.",
+      "mode": "view"
+    },
+    {
       "name": "vscode",
       "title": "Visual Studio Code",
       "description": "Quickly open recent projects in Visual Studio Code.",

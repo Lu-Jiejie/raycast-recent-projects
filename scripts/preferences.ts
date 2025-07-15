@@ -1,23 +1,28 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 
-// 应用配置接口
 interface AppConfig {
-  name: string // command 名称，如 'vscode'
-  title: string // 显示标题，如 'Visual Studio Code'
-  description?: string // 描述，可选，默认根据 title 生成
+  name: string
+  title: string
+  description?: string
   storagePath: {
-    placeholder: string // storage 文件路径示例
-    description?: string // 自定义描述，可选
+    placeholder: string
+    description?: string
   }
   exePath: {
-    placeholder: string // 可执行文件路径示例
-    description?: string // 自定义描述，可选
+    placeholder: string
+    description?: string
   }
 }
 
-// 配置你要支持的应用
+const favoriteConfig = {
+  name: 'favorites',
+  title: 'Favorites',
+  description: 'Manage your favorite projects.',
+}
+
 const appsConfig: AppConfig[] = [
   {
     name: 'vscode',
@@ -43,22 +48,22 @@ const appsConfig: AppConfig[] = [
       description: 'Path to Cursor executable.',
     },
   },
-  // 添加更多应用配置
-  // {
-  //   name: 'webstorm',
-  //   title: 'WebStorm',
-  //   description: 'Quickly open recent projects in WebStorm.',
-  //   storagePath: {
-  //     placeholder: 'C:/Users/USER_NAME/AppData/Roaming/JetBrains/WebStorm2023.1/options/recentProjects.xml',
-  //   },
-  //   exePath: {
-  //     placeholder: 'C:/Program Files/JetBrains/WebStorm 2023.1/bin/webstorm64.exe',
-  //   },
-  // },
 ]
 
-// 生成单个 command 配置
-function generateCommand(app: AppConfig) {
+function generateFavoritesCommand(favoriteConfig: {
+  name: string
+  title: string
+  description: string
+}) {
+  return {
+    name: favoriteConfig.name,
+    title: favoriteConfig.title,
+    description: favoriteConfig.description,
+    mode: 'view',
+  }
+}
+
+function generateAppCommand(app: AppConfig) {
   return {
     name: app.name,
     title: app.title,
@@ -87,26 +92,25 @@ function generateCommand(app: AppConfig) {
   }
 }
 
-// 更新 package.json
 function updatePackageJson() {
   const packageJsonPath = path.join(__dirname, '..', 'package.json')
 
   try {
-    // 读取当前 package.json
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
 
-    // 生成新的 commands 配置
-    const newCommands = appsConfig.map(generateCommand)
+    // const favoriteCommand = generateFavoritesCommand(favoriteConfig)
+    const appCommands = appsConfig.map(generateAppCommand)
 
-    // 更新 commands
-    packageJson.commands = newCommands
+    packageJson.commands = [
+      // favoriteCommand,
+      ...appCommands,
+    ]
 
-    // 写回文件，格式化 JSON
     fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`)
 
     console.log('✅ Successfully updated package.json')
-    console.log(`📦 Generated ${newCommands.length} commands:`)
-    newCommands.forEach((cmd) => {
+    console.log(`📦 Generated ${appCommands.length} commands:`)
+    appCommands.forEach((cmd) => {
       console.log(`   - ${cmd.name}: ${cmd.title}`)
     })
   }
@@ -116,9 +120,8 @@ function updatePackageJson() {
   }
 }
 
-// 运行脚本
 if (require.main === module) {
   updatePackageJson()
 }
 
-export { appsConfig, generateCommand, updatePackageJson }
+export { appsConfig, generateAppCommand as generateCommand, updatePackageJson }

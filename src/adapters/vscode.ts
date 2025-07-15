@@ -6,7 +6,7 @@ import { getPreferenceValues } from '@raycast/api'
 
 interface VSCodeLikeAdapterConfig {
   appName: string
-  iconPath: string
+  icon: string
   storagePathKey: string
   exePathKey: string
 }
@@ -15,7 +15,7 @@ export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapte
   return {
     appName: config.appName,
     getRecentProjects() {
-      const preferences = getPreferenceValues() as Record<string, string>
+      const preferences = getPreferenceValues<Record<string, string>>()
       const storagePath = preferences[config.storagePathKey]
 
       try {
@@ -34,9 +34,10 @@ export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapte
             projectPath = projectPath.charAt(0).toUpperCase() + projectPath.slice(1)
 
             recentProjects.push({
+              appName: config.appName,
               name: projectPath.split('/').pop() || projectPath,
               path: projectPath,
-              icon: config.iconPath,
+              icon: config.icon,
             })
           }
         }
@@ -48,7 +49,7 @@ export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapte
     },
 
     openProject(projectPath: string) {
-      const preferences = getPreferenceValues() as Record<string, string>
+      const preferences = getPreferenceValues<Record<string, string>>()
       const exePath = preferences[config.exePathKey]
 
       exec(`"${exePath}" "${projectPath}"`, (err) => {
@@ -63,7 +64,7 @@ export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapte
 // VSCode 的默认实现
 export const vscodeAdapter = createVSCodeLikeAdapter({
   appName: 'Visual Studio Code',
-  iconPath: 'icons/vscode.png',
+  icon: 'icons/vscode.png',
   storagePathKey: 'vscodeStoragePath',
   exePathKey: 'vscodeExePath',
 })
