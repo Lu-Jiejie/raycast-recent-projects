@@ -1,5 +1,5 @@
-import { appsConfig } from '../adapters'
-import { AppView } from './AppView'
+import { appsConfig } from '../../adapters'
+import { AppView } from '../AppView'
 
 export function createAppCommand(appKey: keyof typeof appsConfig) {
   return function AppCommand() {
@@ -10,7 +10,7 @@ export function createAppCommand(appKey: keyof typeof appsConfig) {
         adapter={config.adapter}
         searchBarPlaceholder={config.searchBarPlaceholder}
         openTitle={config.openTitle}
-        openIcon={config.icon}
+        openIcon={config.adapter.icon}
       />
     )
   }

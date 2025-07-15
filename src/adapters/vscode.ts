@@ -13,6 +13,7 @@ interface VSCodeLikeAdapterConfig {
 
 export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapter {
   return {
+    icon: config.icon,
     appName: config.appName,
     getRecentProjects() {
       const preferences = getPreferenceValues<Record<string, string>>()

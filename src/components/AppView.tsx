@@ -1,8 +1,8 @@
 import type { Adapter } from '../adapters'
+import type { Project } from '../types'
 import { Icon, List } from '@raycast/api'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useApp } from '../logic/useApp'
-import { useProjectFilter } from '../logic/useProjectFilter'
 import { ProjectListItem } from './ProjectListItem'
 
 interface AppViewProps {
@@ -27,11 +27,30 @@ export function AppView({
     handleToggleFavorite,
   } = useApp(adapter)
 
-  const { filteredFavorites, filteredRegulars, totalItems } = useProjectFilter(
-    favoriteProjects,
-    regularProjects,
-    searchText,
-  )
+  // 过滤逻辑：根据搜索文本过滤项目
+  const { filteredFavorites, filteredRegulars, totalItems } = useMemo(() => {
+    if (!searchText.trim()) {
+      return {
+        filteredFavorites: favoriteProjects,
+        filteredRegulars: regularProjects,
+        totalItems: favoriteProjects.length + regularProjects.length,
+      }
+    }
+
+    const searchLower = searchText.toLowerCase()
+    const filter = (item: Project) =>
+      item.name.toLowerCase().includes(searchLower)
+      || item.path.toLowerCase().includes(searchLower)
+
+    const filteredFavorites = favoriteProjects.filter(filter)
+    const filteredRegulars = regularProjects.filter(filter)
+
+    return {
+      filteredFavorites,
+      filteredRegulars,
+      totalItems: filteredFavorites.length + filteredRegulars.length,
+    }
+  }, [favoriteProjects, regularProjects, searchText])
 
   return (
     <List

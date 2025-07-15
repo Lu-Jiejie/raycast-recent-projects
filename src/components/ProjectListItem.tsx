@@ -2,7 +2,7 @@ import type { Project } from '../types'
 import { exec } from 'node:child_process'
 import fs from 'node:fs'
 import { Action, ActionPanel, Icon, List } from '@raycast/api'
-import { showSuccessToast } from '../logic'
+import { showSuccessToast, withErrorHandling } from '../logic'
 
 interface ProjectListItemProps {
   project: Project
@@ -11,15 +11,20 @@ interface ProjectListItemProps {
   onToggleFavorite: (project: Project) => void
 }
 
-function handleOpenInExplorer(targetPath: string) {
-  if (fs.existsSync(targetPath)) {
-    const stat = fs.statSync(targetPath)
-    if (stat.isDirectory()) {
-      exec(`explorer "${targetPath}"`)
-    }
-    else {
-      exec(`explorer /select,"${targetPath}"`)
-    }
+function handleOpenInExplorer(path: string) {
+  if (fs.existsSync(path)) {
+    withErrorHandling(async () => {
+      const stat = fs.statSync(path)
+      if (stat.isDirectory()) {
+        exec(`explorer "${path}"`)
+      }
+      else {
+        exec(`explorer /select,"${path}"`)
+      }
+    }, 'Failed to open in Explorer', {
+      title: 'Opened in Explorer',
+      message: path,
+    })
   }
 }
 

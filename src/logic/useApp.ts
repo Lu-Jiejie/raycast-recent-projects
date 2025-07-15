@@ -63,17 +63,16 @@ export function useApp(adapter: Adapter) {
   }, [rawProjects, isFavorite, adapter.appName, favoritesLoading])
 
   const handleOpenProject = useCallback(async (item: Project) => {
-    const success = await withErrorHandling(
+    await withErrorHandling(
       async () => {
         adapter.openProject(item.path)
-        return true
       },
-      'Open Failed',
+      `Failed to open in ${adapter.appName}`,
+      {
+        title: `Opened ${item.name} in ${adapter.appName}`,
+        message: item.path,
+      },
     )
-
-    if (success) {
-      await showSuccessToast(`Opened in ${adapter.appName}`, item.name)
-    }
   }, [adapter])
 
   const handleToggleFavorite = useCallback(async (project: Project) => {
