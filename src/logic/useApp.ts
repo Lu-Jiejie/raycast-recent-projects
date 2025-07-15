@@ -1,7 +1,7 @@
 import type { Adapter } from '../adapters'
 import type { Project } from '../types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { showErrorToast, showSuccessToast, withErrorHandling } from '.'
+import { showSuccessToast, withErrorHandling } from '.'
 import { useFavorites } from './useFavorites'
 
 export function useApp(adapter: Adapter) {
@@ -19,7 +19,10 @@ export function useApp(adapter: Adapter) {
 
       const data = await withErrorHandling(
         () => adapter.getRecentProjects(),
-        'Failed to Load Projects',
+        errorMessage => ({
+          title: `Failed to Load Recent Projects`,
+          message: errorMessage,
+        }),
       )
 
       setRawProjects(data || [])
@@ -65,9 +68,12 @@ export function useApp(adapter: Adapter) {
   const handleOpenProject = useCallback(async (item: Project) => {
     await withErrorHandling(
       async () => {
-        adapter.openProject(item.path)
+        await adapter.openProject(item.path)
       },
-      `Failed to open in ${adapter.appName}`,
+      errorMessage => ({
+        title: `Failed to open in ${adapter.appName}`,
+        message: errorMessage,
+      }),
       {
         title: `Opened ${item.name} in ${adapter.appName}`,
         message: item.path,
@@ -82,7 +88,10 @@ export function useApp(adapter: Adapter) {
         await toggleFavorite(project)
         return wasAlreadyFavorite ? 'removed from' : 'added to'
       },
-      'Failed to update favorites',
+      errorMessage => ({
+        title: `Failed to update favorites`,
+        message: errorMessage,
+      }),
     )
 
     if (success) {

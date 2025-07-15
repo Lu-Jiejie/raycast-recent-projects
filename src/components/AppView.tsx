@@ -1,6 +1,6 @@
 import type { Adapter } from '../adapters'
 import type { Project } from '../types'
-import { Icon, List } from '@raycast/api'
+import { List } from '@raycast/api'
 import { useMemo, useState } from 'react'
 import { useApp } from '../logic/useApp'
 import { ProjectListItem } from './ProjectListItem'

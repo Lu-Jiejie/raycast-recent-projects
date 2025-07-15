@@ -6,7 +6,7 @@ export interface Adapter {
   appName: string
   icon: string
   getRecentProjects: () => Project[]
-  openProject: (path: string) => void
+  openProject: (path: string) => Promise<void>
 }
 
 export interface AppConfig {

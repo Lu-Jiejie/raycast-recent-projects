@@ -1,4 +1,18 @@
+import { exec } from 'node:child_process'
 import { showToast, Toast } from '@raycast/api'
+
+export function execPromise(command: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    exec(command, (error) => {
+      if (error) {
+        reject(error)
+      }
+      else {
+        resolve()
+      }
+    })
+  })
+}
 
 export function showSuccessToast(title: string, message: string) {
   return showToast({
@@ -18,7 +32,10 @@ export function showErrorToast(title: string, message: string) {
 
 export async function withErrorHandling<T>(
   operation: () => Promise<T> | T,
-  errorTitle: string,
+  errorToast: (errorMessage: string) => {
+    title: string
+    message: string
+  },
   successToast?: {
     title: string
     message: string
@@ -33,7 +50,11 @@ export async function withErrorHandling<T>(
     return result
   }
   catch (error) {
-    await showErrorToast(errorTitle, error instanceof Error ? error.message : 'Unknown error occurred')
+    const { title, message } = errorToast(error instanceof Error ? error.message : 'Unknown error occurred')
+    await showErrorToast(
+      title,
+      message,
+    )
     return null
   }
 }

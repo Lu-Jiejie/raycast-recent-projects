@@ -24,8 +24,8 @@ export function useFavorites() {
           setAllFavorites(parsed)
         }
       }
-      catch (error) {
-        console.error('Failed to load favorites:', error)
+      catch (e) {
+        throw new Error(String(e))
         setAllFavorites([])
       }
       finally {
@@ -42,7 +42,7 @@ export function useFavorites() {
       setAllFavorites(newFavorites)
     }
     catch (error) {
-      console.error('Failed to save favorites:', error)
+      throw new Error(String(error))
     }
   }, [storageKey])
 

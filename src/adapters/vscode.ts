@@ -1,8 +1,8 @@
 import type { Adapter } from '.'
 import type { Project } from '../types'
-import { exec } from 'node:child_process'
 import fs from 'node:fs'
 import { getPreferenceValues } from '@raycast/api'
+import { execPromise } from '../logic'
 
 interface VSCodeLikeAdapterConfig {
   appName: string
@@ -33,7 +33,8 @@ export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapte
             // URL 解码和路径格式转换
             projectPath = decodeURIComponent(projectPath)
             projectPath = projectPath.charAt(0).toUpperCase() + projectPath.slice(1)
-
+            // 换为windows的斜杠
+            // projectPath = projectPath.replace(/\//g, '\\')
             recentProjects.push({
               appName: config.appName,
               name: projectPath.split('/').pop() || projectPath,
@@ -45,7 +46,7 @@ export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapte
         return recentProjects
       }
       catch (e) {
-        throw new Error(`Failed to read ${config.appName} recent projects: ${String(e)}`)
+        throw new Error(String(e))
       }
     },
 
@@ -53,11 +54,17 @@ export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapte
       const preferences = getPreferenceValues<Record<string, string>>()
       const exePath = preferences[config.exePathKey]
 
-      exec(`"${exePath}" "${projectPath}"`, (err) => {
-        if (err) {
-          throw new Error(`Failed to open project in ${config.appName}: ${String(err)}`)
-        }
-      })
+      // return new Promise<void>((resolve, reject) => {
+      //   exec(`"${exePath}" "${projectPath}"`, (err) => {
+      //     if (err) {
+      //       reject(new Error(String(err)))
+      //     }
+      //     else {
+      //       resolve()
+      //     }
+      //   })
+      // })
+      return execPromise(`"${exePath}" "${projectPath}"`)
     },
   }
 }
