@@ -4,8 +4,3 @@ export interface Project {
   icon?: string
   isFavorite?: boolean
 }
-
-export interface Adapter {
-  getRecentProjects: () => Project[]
-  openProject: (path: string) => void
-}

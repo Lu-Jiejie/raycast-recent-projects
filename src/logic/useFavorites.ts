@@ -1,4 +1,3 @@
-import type { Project } from '../types'
 import { LocalStorage } from '@raycast/api'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -9,6 +8,7 @@ export interface FavoriteItem {
 
 export function useFavorites() {
   const [allFavorites, setAllFavorites] = useState<FavoriteItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const storageKey = 'all-favorites'
 
   // 从本地存储加载收藏夹
@@ -24,6 +24,9 @@ export function useFavorites() {
       catch (error) {
         console.error('Failed to load favorites:', error)
         setAllFavorites([])
+      }
+      finally {
+        setIsLoading(false)
       }
     }
     loadFavorites()
@@ -57,7 +60,7 @@ export function useFavorites() {
         appName,
         path,
       }
-      const newFavorites = [...allFavorites, newFavoriteItem]
+      const newFavorites = [newFavoriteItem, ...allFavorites]
       await saveFavorites(newFavorites)
     }
   }, [allFavorites, isFavorite, saveFavorites])
@@ -85,5 +88,6 @@ export function useFavorites() {
     addToFavorites,
     removeFromFavorites,
     getFavoritesByApp,
+    isLoading,
   }
 }

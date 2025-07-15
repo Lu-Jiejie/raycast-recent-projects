@@ -1,4 +1,5 @@
-import type { Adapter, Project } from '../types'
+import type { Adapter } from '.'
+import type { Project } from '../types'
 import { exec } from 'node:child_process'
 import fs from 'node:fs'
 import { getPreferenceValues } from '@raycast/api'
@@ -12,6 +13,7 @@ interface VSCodeLikeAdapterConfig {
 
 export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapter {
   return {
+    appName: config.appName,
     getRecentProjects() {
       const preferences = getPreferenceValues() as Record<string, string>
       const storagePath = preferences[config.storagePathKey]
@@ -60,7 +62,7 @@ export function createVSCodeLikeAdapter(config: VSCodeLikeAdapterConfig): Adapte
 
 // VSCode 的默认实现
 export const vscodeAdapter = createVSCodeLikeAdapter({
-  appName: 'VSCode',
+  appName: 'Visual Studio Code',
   iconPath: 'icons/vscode.png',
   storagePathKey: 'vscodeStoragePath',
   exePathKey: 'vscodeExePath',

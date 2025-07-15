@@ -7,7 +7,6 @@ export default function Command() {
   return (
     <AppView
       adapter={config.adapter}
-      appName={config.name}
       searchBarPlaceholder={config.searchBarPlaceholder}
       openTitle={config.openTitle}
       openIcon={config.openIcon}
