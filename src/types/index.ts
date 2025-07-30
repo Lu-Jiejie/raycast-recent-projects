@@ -1,4 +1,5 @@
 export interface Project {
+  type: 'workspace' | 'bookmark'
   name: string
   path: string
   id: string
@@ -8,19 +9,4 @@ export interface Project {
   isFavorite?: boolean
 }
 
-export interface BrowserBookmark {
-  name: string
-  url: string
-  id: string
-  browserName: string
-  browserExePath: string
-  browserIcon: string
-  isFavorite?: boolean
-}
-
-export interface FavoriteItem {
-  appName: string
-  name: string
-  path: string
-  icon: string
-}
+export type FavoriteItem = Omit<Project, 'isFavorite'>

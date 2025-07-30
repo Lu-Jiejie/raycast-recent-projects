@@ -1,3 +1,3 @@
-import { createProjectListView } from './components/create/createProjectListView'
+import { createWorkspaceListView } from './components/create/createWorkspaceListView'
 
-export default createProjectListView('cursor')
+export default createWorkspaceListView('cursor')

@@ -24,7 +24,7 @@
           "name": "vscodeStoragePath",
           "title": "Visual Studio Code Storage Path",
           "description": "Path to Visual Studio Code recent projects storage file.",
-          "type": "textfield",
+          "type": "file",
           "default": "",
           "placeholder": "C:/Users/USER_NAME/AppData/Roaming/Code/User/globalStorage/storage.json",
           "required": true
@@ -33,7 +33,7 @@
           "name": "vscodeExePath",
           "title": "Visual Studio Code Executable Path",
           "description": "Path to Visual Studio Code executable.",
-          "type": "textfield",
+          "type": "file",
           "default": "",
           "placeholder": "C:/Program Files/Microsoft VS Code/code.exe",
           "required": true
@@ -50,7 +50,7 @@
           "name": "cursorStoragePath",
           "title": "Cursor Storage Path",
           "description": "Path to Cursor recent projects storage file.",
-          "type": "textfield",
+          "type": "file",
           "default": "",
           "placeholder": "C:/Users/USER_NAME/AppData/Roaming/Cursor/User/globalStorage/storage.json",
           "required": true
@@ -59,7 +59,7 @@
           "name": "cursorExePath",
           "title": "Cursor Executable Path",
           "description": "Path to Cursor executable.",
-          "type": "textfield",
+          "type": "file",
           "default": "",
           "placeholder": "C:/Users/USER_NAME/Local/Programs/cursor/Cursor.exe",
           "required": true

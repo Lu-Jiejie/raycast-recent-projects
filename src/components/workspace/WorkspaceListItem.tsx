@@ -1,6 +1,6 @@
-import type { Project } from '../types'
+import type { Project } from '../../types'
 import { Action, ActionPanel, Color, Icon, List } from '@raycast/api'
-import { showSuccessToast, toWindowsPath } from '../logic'
+import { showSuccessToast, toWindowsPath } from '../../logic'
 
 interface ProjectListItemProps {
   project: Project

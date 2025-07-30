@@ -1,8 +1,8 @@
 import { appsConfig } from '../../adapters'
-import { ProjectList } from '../ProjectList'
+import { ProjectList } from '../workspace/WorkspaceList'
 
-export function createProjectListView(appKey: keyof typeof appsConfig) {
-  return function ProjectListView() {
+export function createWorkspaceListView(appKey: keyof typeof appsConfig) {
+  return function WorkspaceListView() {
     const config = appsConfig[appKey]
 
     return (

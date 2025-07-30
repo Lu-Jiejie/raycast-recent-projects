@@ -43,29 +43,24 @@ export function useFavoriteList() {
   const getFavoriteListByApp = useCallback((appName: string) => {
     return favoriteList
       .filter(item => item.appName === appName)
-      .map(item => item.path)
+      .map(item => item.id)
   }, [favoriteList])
 
   const isFavorite = useCallback((appName: string, path: string) => {
-    return favoriteList.some(item => item.appName === appName && item.path === path)
+    return favoriteList.some(item => item.appName === appName && item.id === path)
   }, [favoriteList])
 
   const addToFavoriteList = useCallback(async (project: Project) => {
     if (!isFavorite(project.appName, project.path)) {
-      const newFavoriteItem: FavoriteItem = {
-        name: project.name,
-        appName: project.appName,
-        path: project.path,
-        icon: project.appIcon,
-      }
+      const { isFavorite, ...newFavoriteItem } = project
       const newFavoriteList = [newFavoriteItem, ...favoriteList]
       await saveFavoriteList(newFavoriteList)
     }
   }, [favoriteList, isFavorite, saveFavoriteList])
 
-  const removeFromFavoriteList = useCallback(async (appName: string, path: string) => {
+  const removeFromFavoriteList = useCallback(async (appName: string, id: string) => {
     const newFavoriteList = favoriteList.filter(
-      item => !(item.appName === appName && item.path === path),
+      item => !(item.appName === appName && item.id === id),
     )
     await saveFavoriteList(newFavoriteList)
   }, [favoriteList, saveFavoriteList])

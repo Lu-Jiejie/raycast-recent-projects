@@ -1,9 +1,9 @@
-import type { Adapter } from '../adapters'
-import type { Project } from '../types'
+import type { Adapter } from '../../adapters'
+import type { Project } from '../../types'
 import { List } from '@raycast/api'
 import { useMemo, useState } from 'react'
-import { useProjectList } from '../logic/useProjectList'
-import { ProjectListItem } from './ProjectListItem'
+import { useProjectList } from '../../logic/useProjectList'
+import { ProjectListItem } from './WorkspaceListItem'
 
 interface ProjectListProps {
   adapter: Adapter
@@ -23,7 +23,6 @@ export function ProjectList({
     handleToggleFavorite,
   } = useProjectList(adapter)
 
-  // 过滤逻辑：根据搜索文本过滤项目
   const { filteredFavorites, filteredRegulars, totalItems } = useMemo(() => {
     if (!searchText.trim()) {
       return {
@@ -34,9 +33,14 @@ export function ProjectList({
     }
 
     const searchLower = searchText.toLowerCase()
-    const filter = (item: Project) =>
-      item.name.toLowerCase().includes(searchLower)
-      || item.path.toLowerCase().includes(searchLower)
+    // const filter = (item: Project) =>
+    //   item.name.toLowerCase().includes(searchLower)
+    //   || item.path.toLowerCase().includes(searchLower)
+
+    const filter = (item: Project) => {
+      return item.name.toLowerCase().includes(searchLower)
+        || item.path.toLowerCase().includes(searchLower)
+    }
 
     const filteredFavorites = favoriteProjects.filter(filter)
     const filteredRegulars = regularProjects.filter(filter)
@@ -69,7 +73,7 @@ export function ProjectList({
                 <List.Section title="Favorites" subtitle={`${filteredFavorites.length} projects`}>
                   {filteredFavorites.map(item => (
                     <ProjectListItem
-                      key={item.path}
+                      key={item.id}
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
                     />
@@ -81,7 +85,7 @@ export function ProjectList({
                 <List.Section title="Recent Projects" subtitle={`${filteredRegulars.length} projects`}>
                   {filteredRegulars.map(item => (
                     <ProjectListItem
-                      key={item.path}
+                      key={item.id}
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
                     />
