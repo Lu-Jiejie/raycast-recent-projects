@@ -58,3 +58,11 @@ export async function withErrorHandling<T>(
     return null
   }
 }
+
+export function toWindowsPath(path: string): string {
+  return path.replace(/\//g, '\\')
+}
+
+export function toUnixPath(path: string): string {
+  return path.replace(/\\/g, '/')
+}

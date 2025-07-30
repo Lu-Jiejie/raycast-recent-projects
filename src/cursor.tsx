@@ -1,3 +1,3 @@
-import { createAppCommand } from './components/create/createAppCommand'
+import { createProjectListView } from './components/create/createProjectListView'
 
-export default createAppCommand('cursor')
+export default createProjectListView('cursor')

@@ -2,30 +2,26 @@ import type { Adapter } from '../adapters'
 import type { Project } from '../types'
 import { List } from '@raycast/api'
 import { useMemo, useState } from 'react'
-import { useApp } from '../logic/useApp'
+import { useProjectList } from '../logic/useProjectList'
 import { ProjectListItem } from './ProjectListItem'
 
-interface AppViewProps {
+interface ProjectListProps {
   adapter: Adapter
   searchBarPlaceholder?: string
-  openTitle?: string
-  openIcon?: string
 }
 
-export function AppView({
+export function ProjectList({
   adapter,
   searchBarPlaceholder,
-  openTitle,
-}: AppViewProps) {
+}: ProjectListProps) {
   const [searchText, setSearchText] = useState('')
 
   const {
     favoriteProjects,
     regularProjects,
     isLoading,
-    handleOpenProject,
     handleToggleFavorite,
-  } = useApp(adapter)
+  } = useProjectList(adapter)
 
   // 过滤逻辑：根据搜索文本过滤项目
   const { filteredFavorites, filteredRegulars, totalItems } = useMemo(() => {
@@ -75,8 +71,6 @@ export function AppView({
                     <ProjectListItem
                       key={item.path}
                       project={item}
-                      openTitle={openTitle}
-                      onOpenProject={handleOpenProject}
                       onToggleFavorite={handleToggleFavorite}
                     />
                   ))}
@@ -89,8 +83,6 @@ export function AppView({
                     <ProjectListItem
                       key={item.path}
                       project={item}
-                      openTitle={openTitle}
-                      onOpenProject={handleOpenProject}
                       onToggleFavorite={handleToggleFavorite}
                     />
                   ))}

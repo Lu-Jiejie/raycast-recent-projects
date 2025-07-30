@@ -17,11 +17,24 @@ interface AppConfig {
   }
 }
 
-const favoriteConfig = {
-  name: 'favorites',
-  title: 'Favorites',
-  description: 'Manage your favorite projects.',
-}
+// const favoriteConfig = {
+//   name: 'favorites',
+//   title: 'Favorites',
+//   description: 'Manage your favorite projects.',
+// }
+
+// function generateFavoritesCommand(favoriteConfig: {
+//   name: string
+//   title: string
+//   description: string
+// }) {
+//   return {
+//     name: favoriteConfig.name,
+//     title: favoriteConfig.title,
+//     description: favoriteConfig.description,
+//     mode: 'view',
+//   }
+// }
 
 const appsConfig: AppConfig[] = [
   {
@@ -50,19 +63,6 @@ const appsConfig: AppConfig[] = [
   },
 ]
 
-function generateFavoritesCommand(favoriteConfig: {
-  name: string
-  title: string
-  description: string
-}) {
-  return {
-    name: favoriteConfig.name,
-    title: favoriteConfig.title,
-    description: favoriteConfig.description,
-    mode: 'view',
-  }
-}
-
 function generateAppCommand(app: AppConfig) {
   return {
     name: app.name,
@@ -89,6 +89,19 @@ function generateAppCommand(app: AppConfig) {
         required: true,
       },
     ],
+  }
+}
+
+interface BrowserConfig {
+  name: string
+  title: string
+  description?: string
+  bookmarkPath: string
+}
+
+function generateBookmarkCommand(browser: BrowserConfig) {
+  return {
+
   }
 }
 
