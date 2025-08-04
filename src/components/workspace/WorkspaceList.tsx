@@ -1,7 +1,8 @@
 import type { Adapter } from '../../adapters'
 import type { Project } from '../../types'
-import { List } from '@raycast/api'
-import { useMemo, useState } from 'react'
+import { Action, ActionPanel, List, openExtensionPreferences } from '@raycast/api'
+import { useEffect, useMemo, useState } from 'react'
+import { showErrorToast, showSuccessToast } from '../../logic'
 import { useProjectList } from '../../logic/useProjectList'
 import { ProjectListItem } from './WorkspaceListItem'
 
@@ -20,8 +21,18 @@ export function ProjectList({
     favoriteProjects,
     regularProjects,
     isLoading,
-    handleToggleFavorite,
+    toggleFavorite,
+    error,
   } = useProjectList(adapter)
+
+  useEffect(() => {
+    if (error) {
+      showErrorToast(
+        error.title,
+        error.message,
+      )
+    }
+  }, [error])
 
   const { filteredFavorites, filteredRegulars, totalItems } = useMemo(() => {
     if (!searchText.trim()) {
@@ -33,9 +44,6 @@ export function ProjectList({
     }
 
     const searchLower = searchText.toLowerCase()
-    // const filter = (item: Project) =>
-    //   item.name.toLowerCase().includes(searchLower)
-    //   || item.path.toLowerCase().includes(searchLower)
 
     const filter = (item: Project) => {
       return item.name.toLowerCase().includes(searchLower)
@@ -51,6 +59,34 @@ export function ProjectList({
       totalItems: filteredFavorites.length + filteredRegulars.length,
     }
   }, [favoriteProjects, regularProjects, searchText])
+
+  const handleToggleFavorite = async (project: Project) => {
+    const res = await toggleFavorite(project)
+    const resText = res ? 'Added to Favorites' : 'Removed from Favorites'
+    await showSuccessToast(resText, project.name)
+  }
+
+  if (!adapter.appStoragePath) {
+    return (
+      <List
+        actions={(
+          <ActionPanel>
+            <ActionPanel.Section title="Configuration Required">
+              <Action
+                title="Set Storage Path"
+                onAction={openExtensionPreferences}
+              />
+            </ActionPanel.Section>
+          </ActionPanel>
+        )}
+      >
+        <List.EmptyView
+          title={`${adapter.appName} Storage Path Not Configured`}
+          description={`Please set the ${adapter.appName} storage path in the extension settings.`}
+        />
+      </List>
+    )
+  }
 
   return (
     <List

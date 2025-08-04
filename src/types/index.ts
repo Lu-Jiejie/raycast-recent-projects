@@ -6,6 +6,10 @@ export interface Project {
   appName: string
   appExePath: string
   appIcon: string
+  /** only for bookmarks, maybe */
+  tags?: string[]
+  /** only for bookmarks, maybe */
+  date?: string
   isFavorite?: boolean
 }
 

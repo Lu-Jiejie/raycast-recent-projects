@@ -1,22 +1,32 @@
-/* eslint-disable unused-imports/no-unused-vars */
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 
-interface AppConfig {
+interface WorkspaceConfigItem {
   name: string
   title: string
   description?: string
   storagePath: {
-    placeholder: string
+    placeholder?: string
     description?: string
   }
   exePath: {
-    placeholder: string
+    placeholder?: string
     description?: string
   }
 }
 
+interface BookmarkConfigItem {
+  name: string
+  title: string
+  description?: string
+  bookmarkPath: {
+    description?: string
+  }
+  exePath: {
+    description?: string
+  }
+}
 // const favoriteConfig = {
 //   name: 'favorites',
 //   title: 'Favorites',
@@ -36,72 +46,102 @@ interface AppConfig {
 //   }
 // }
 
-const appsConfig: AppConfig[] = [
+const workspaceConfig: WorkspaceConfigItem[] = [
   {
     name: 'vscode',
     title: 'Visual Studio Code',
     storagePath: {
-      placeholder: 'C:/Users/USER_NAME/AppData/Roaming/Code/User/globalStorage/storage.json',
-      description: 'Path to Visual Studio Code recent projects storage file.',
+      description: 'Path to "state.vscdb"',
+      placeholder: 'Path to "state.vscdb"',
     },
     exePath: {
-      placeholder: 'C:/Program Files/Microsoft VS Code/code.exe',
-      description: 'Path to Visual Studio Code executable.',
+      description: 'Path to "code.exe"',
+      placeholder: 'Path to "code.exe"',
     },
   },
   {
     name: 'cursor',
     title: 'Cursor',
     storagePath: {
-      placeholder: 'C:/Users/USER_NAME/AppData/Roaming/Cursor/User/globalStorage/storage.json',
-      description: 'Path to Cursor recent projects storage file.',
+      description: 'Path to "state.vscdb"',
+      placeholder: 'Path to "state.vscdb"',
     },
     exePath: {
-      placeholder: 'C:/Users/USER_NAME/Local/Programs/cursor/Cursor.exe',
-      description: 'Path to Cursor executable.',
+      description: 'Path to "Cursor.exe"',
+      placeholder: 'Path to "Cursor.exe"',
     },
   },
 ]
 
-function generateAppCommand(app: AppConfig) {
+function generateWorkspaceCommand(app: WorkspaceConfigItem) {
   return {
     name: app.name,
     title: app.title,
     description: app.description || `Quickly open recent projects in ${app.title}.`,
     mode: 'view',
-    preferences: [
-      {
-        name: `${app.name}StoragePath`,
-        title: `${app.title} Storage Path`,
-        description: app.storagePath.description || `Path to ${app.title} recent projects storage file.`,
-        type: 'file',
-        default: '',
-        placeholder: app.storagePath.placeholder,
-        required: true,
-      },
-      {
-        name: `${app.name}ExePath`,
-        title: `${app.title} Executable Path`,
-        description: app.exePath.description || `Path to ${app.title} executable.`,
-        type: 'file',
-        default: '',
-        placeholder: app.exePath.placeholder,
-        required: true,
-      },
-    ],
   }
 }
 
-interface BrowserConfig {
-  name: string
-  title: string
-  description?: string
-  bookmarkPath: string
+function generateWorkspacePreference(app: WorkspaceConfigItem) {
+  return [
+    {
+      name: `${app.name}StoragePath`,
+      title: `${app.title} Storage Path`,
+      description: app.storagePath.description || `Path to ${app.title} recent projects storage file.`,
+      type: 'textfield',
+      default: '',
+      required: false,
+    },
+    {
+      name: `${app.name}ExePath`,
+      title: `${app.title} Exe Path`,
+      description: app.exePath.description || `Path to ${app.title} executable.`,
+      type: 'textfield',
+      default: '',
+      required: false,
+    },
+  ]
 }
 
-function generateBookmarkCommand(browser: BrowserConfig) {
-  return {
+const bookmarkConfig: BookmarkConfigItem[] = [
+  {
+    name: 'chrome',
+    title: 'Google Chrome',
+    bookmarkPath: { },
+    exePath: { },
+  },
+  {
+    name: 'edge',
+    title: 'Microsoft Edge',
+    bookmarkPath: { },
+    exePath: { },
+  },
+]
 
+function generateBookmarkCommand(browser: BookmarkConfigItem) {
+  return {
+    name: browser.name,
+    title: browser.title,
+    description: browser.description || `Quickly open bookmarks in ${browser.title}.`,
+    mode: 'view',
+    preferences: [
+      {
+        name: `${browser.name}BookmarkPath`,
+        title: `${browser.title} Bookmark Path`,
+        description: browser.bookmarkPath.description || `Path to ${browser.title} bookmarks file.`,
+        type: 'textfield',
+        default: '',
+        required: true,
+      },
+      {
+        name: `${browser.name}ExePath`,
+        title: `${browser.title} Executable Path`,
+        description: browser.exePath.description || `Path to ${browser.title} executable.`,
+        type: 'textfield',
+        default: '',
+        // required: true,
+      },
+    ],
   }
 }
 
@@ -112,18 +152,26 @@ function updatePackageJson() {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
 
     // const favoriteCommand = generateFavoritesCommand(favoriteConfig)
-    const appCommands = appsConfig.map(generateAppCommand)
+    const workspaceCommands = workspaceConfig.map(generateWorkspaceCommand)
+    const bookmarkCommands = bookmarkConfig.map(generateBookmarkCommand)
+
+    const workspacePreferences = workspaceConfig.flatMap(generateWorkspacePreference)
 
     packageJson.commands = [
-      // favoriteCommand,
-      ...appCommands,
+      ...workspaceCommands,
+      ...bookmarkCommands,
+    ]
+
+    packageJson.preferences = [
+      ...workspacePreferences,
     ]
 
     fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`)
 
+    const commands = [...workspaceCommands, ...bookmarkCommands]
     console.log('✅ Successfully updated package.json')
-    console.log(`📦 Generated ${appCommands.length} commands:`)
-    appCommands.forEach((cmd) => {
+    console.log(`📦 Generated ${commands.length} commands:`)
+    commands.forEach((cmd) => {
       console.log(`   - ${cmd.name}: ${cmd.title}`)
     })
   }
@@ -137,4 +185,4 @@ if (require.main === module) {
   updatePackageJson()
 }
 
-export { appsConfig, generateAppCommand as generateCommand, updatePackageJson }
+export { workspaceConfig as appsConfig, generateWorkspaceCommand as generateCommand, updatePackageJson }

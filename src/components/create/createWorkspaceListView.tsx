@@ -1,14 +1,14 @@
-import { appsConfig } from '../../adapters'
+import { adapterMap } from '../../adapters'
 import { ProjectList } from '../workspace/WorkspaceList'
 
-export function createWorkspaceListView(appKey: keyof typeof appsConfig) {
+export function createWorkspaceListView(appKey: keyof typeof adapterMap) {
   return function WorkspaceListView() {
-    const config = appsConfig[appKey]
+    const adapter = adapterMap[appKey]
 
     return (
       <ProjectList
-        adapter={config.adapter}
-        searchBarPlaceholder={config.searchBarPlaceholder}
+        adapter={adapter}
+        searchBarPlaceholder={adapter.searchBarPlaceholder}
       />
     )
   }

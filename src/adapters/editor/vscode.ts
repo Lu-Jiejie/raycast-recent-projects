@@ -1,9 +1,13 @@
 import type { Adapter } from '..'
 import type { Project } from '../../types'
-import fs from 'node:fs'
 import { getPreferenceValues } from '@raycast/api'
+import { executeSQL } from '@raycast/utils'
+import { toUnixPath } from '../../logic'
+import { resolveAppExePath } from '../../logic/resolveAppExePath'
 
-export function getVSCodeLikeRecentProjects({
+const QUERY = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\';'
+
+export async function getVSCodeLikeRecentProjects({
   appName,
   appIcon,
   appExePath,
@@ -13,46 +17,51 @@ export function getVSCodeLikeRecentProjects({
   appIcon: string
   appExePath: string
   appStoragePath: string
-}): Project[] {
-  try {
-    const storageContent = fs.readFileSync(appStoragePath, 'utf-8')
-    const storageJson = JSON.parse(storageContent)
-    // VSCode 最近项目存储在 profileAssociations.workspaces 中
-    const workspaceMap = storageJson?.profileAssociations?.workspaces || {}
-    const workspaceKeys = Object.keys(workspaceMap)
-    const recentProjects: Project[] = []
+}): Promise<Project[]> {
+  if (!appStoragePath) {
+    throw new Error(`${appName} storage path is not set`)
+  }
 
-    for (const workspaceKey of workspaceKeys.reverse()) {
-      if (workspaceKey.startsWith('file:///')) {
-        let projectPath = workspaceKey.replace('file:///', '')
-        // URL 解码和路径格式转换
-        projectPath = decodeURIComponent(projectPath)
-        projectPath = projectPath.charAt(0).toUpperCase() + projectPath.slice(1)
-        // 换为windows的斜杠
-        // projectPath = projectPath.replace(/\//g, '\\')
-        recentProjects.push({
-          appName,
-          name: projectPath.split('/').pop() || projectPath,
-          path: projectPath,
-          appExePath,
-          appIcon,
-          id: projectPath,
-        })
-      }
+  appStoragePath = toUnixPath(appStoragePath)
+  const queryRes = await executeSQL<{ value: string }>(appStoragePath, QUERY)
+  const storageJson = JSON.parse(queryRes[0].value) as {
+    entries: Array<{ folderUri: string }>
+  }
+  // VSCode 最近项目存储在 profileAssociations.workspaces 中
+  const workspaceData = storageJson.entries
+  const recentProjects: Project[] = []
+
+  for (const workspaceKey of workspaceData) {
+    if (!workspaceKey.folderUri)
+      continue
+
+    if (workspaceKey.folderUri.startsWith('file:///')) {
+      let projectPath = workspaceKey.folderUri.replace('file:///', '')
+      // URL 解码和路径格式转换
+      projectPath = decodeURIComponent(projectPath)
+      projectPath = projectPath.charAt(0).toUpperCase() + projectPath.slice(1)
+      // 换为windows的斜杠
+      // projectPath = projectPath.replace(/\//g, '\\')
+      recentProjects.push({
+        type: 'workspace',
+        appName,
+        name: projectPath.split('/').pop() || projectPath,
+        path: projectPath,
+        appExePath: appExePath || await resolveAppExePath(appName),
+        appIcon,
+        id: projectPath,
+      })
     }
-    return recentProjects
   }
-  catch (e) {
-    throw new Error(String(e))
-  }
+  return recentProjects
 }
 
-const preferences = getPreferenceValues<Preferences.Vscode>()
+const preferences = getPreferenceValues<Preferences>()
 export const vscodeAdapter: Adapter = {
   appName: 'Visual Studio Code',
   appIcon: 'icons/vscode.png',
-  appExePath: preferences.vscodeExePath,
-  getRecentProjects: () => getVSCodeLikeRecentProjects({
+  appStoragePath: preferences.vscodeStoragePath,
+  getRecentProjects: async () => getVSCodeLikeRecentProjects({
     appName: 'Visual Studio Code',
     appIcon: 'icons/vscode.png',
     appExePath: preferences.vscodeExePath,

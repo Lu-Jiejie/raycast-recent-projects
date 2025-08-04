@@ -30,32 +30,15 @@ export function showErrorToast(title: string, message: string) {
   })
 }
 
-export async function withErrorHandling<T>(
-  operation: () => Promise<T> | T,
-  errorToast: (errorMessage: string) => {
-    title: string
-    message: string
-  },
-  successToast?: {
-    title: string
-    message: string
-  },
-): Promise<T | null> {
+type Result<T> = { ok: true, data: T } | { ok: false, error: string }
+
+export async function withErrorHandling<T>(fn: () => Promise<T>): Promise<Result<T>> {
   try {
-    const result = await operation()
-    // 只有在操作成功时才显示成功提示
-    if (successToast) {
-      await showSuccessToast(successToast.title, successToast.message)
-    }
-    return result
+    const data = await fn()
+    return { ok: true, data }
   }
-  catch (error) {
-    const { title, message } = errorToast(error instanceof Error ? error.message : 'Unknown error occurred')
-    await showErrorToast(
-      title,
-      message,
-    )
-    return null
+  catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) }
   }
 }
 

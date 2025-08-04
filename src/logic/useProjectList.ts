@@ -1,36 +1,56 @@
 import type { Adapter } from '../adapters'
 import type { Project } from '../types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { showSuccessToast, withErrorHandling } from '.'
+import { useEffect, useMemo, useState } from 'react'
+import { showErrorToast, withErrorHandling } from '.'
 import { useFavoriteList } from './useFavoriteList'
 
+type ProjectListError
+  = | { title: 'Failed to Load Recent Projects', message: string }
+
 export function useProjectList(adapter: Adapter) {
-  // 状态管理
   const [rawProjects, setRawProjects] = useState<Project[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<ProjectListError | null>(null)
 
-  // 配置和依赖
-  const { isFavorite, toggleFavorite, isLoading: favoriteListLoading } = useFavoriteList()
+  const {
+    isFavorite,
+    toggleFavorite,
+    isLoading: favoriteListLoading,
+    error: favoriteListError,
+  } = useFavoriteList()
 
-  // 获取项目数据
   useEffect(() => {
-    async function fetchProjects() {
+    async function loadRawProjects() {
       setIsLoading(true)
 
-      const data = await withErrorHandling(
+      const result = await withErrorHandling(
         () => adapter.getRecentProjects(),
-        errorMessage => ({
-          title: `Failed to Load Recent Projects`,
-          message: errorMessage,
-        }),
       )
+      if (!result.ok) {
+        setError({
+          title: 'Failed to Load Recent Projects',
+          message: result.error,
+        })
+        setIsLoading(false)
+        return
+      }
 
-      setRawProjects(data || [])
+      setError(null)
+      setRawProjects(result.data || [])
       setIsLoading(false)
     }
 
-    fetchProjects()
+    loadRawProjects()
   }, [adapter])
+
+  useEffect(() => {
+    if (favoriteListError) {
+      showErrorToast(
+        favoriteListError.title,
+        favoriteListError.message,
+      )
+    }
+  }, [favoriteListError])
 
   // 合并收藏状态并分组
   const groupedProjects = useMemo(() => {
@@ -65,28 +85,17 @@ export function useProjectList(adapter: Adapter) {
     }
   }, [rawProjects, isFavorite, adapter.appName, favoriteListLoading])
 
-  const handleToggleFavorite = useCallback(async (project: Project) => {
-    const success = await withErrorHandling(
-      async () => {
-        const wasAlreadyFavorite = isFavorite(adapter.appName, project.path)
-        await toggleFavorite(project)
-        return wasAlreadyFavorite ? 'removed from' : 'added to'
-      },
-      errorMessage => ({
-        title: `Failed to update favorite list`,
-        message: errorMessage,
-      }),
-    )
-
-    if (success) {
-      await showSuccessToast(`Project ${success} favorite list`, project.name)
-    }
-  }, [isFavorite, toggleFavorite, adapter.appName])
+  // const handleToggleFavorite = useCallback(async (project: Project) => {
+  //   const wasAlreadyFavorite = isFavorite(adapter.appName, project.path)
+  //   await toggleFavorite(project)
+  //   return wasAlreadyFavorite
+  // }, [isFavorite, toggleFavorite, adapter.appName])
 
   return {
     favoriteProjects: groupedProjects.favoriteProjects,
     regularProjects: groupedProjects.regularProjects,
     isLoading: isLoading || favoriteListLoading || !groupedProjects.isReady,
-    handleToggleFavorite,
+    toggleFavorite,
+    error,
   }
 }

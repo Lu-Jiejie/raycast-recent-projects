@@ -18,51 +18,57 @@
       "name": "vscode",
       "title": "Visual Studio Code",
       "description": "Quickly open recent projects in Visual Studio Code.",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "vscodeStoragePath",
-          "title": "Visual Studio Code Storage Path",
-          "description": "Path to Visual Studio Code recent projects storage file.",
-          "type": "file",
-          "default": "",
-          "placeholder": "C:/Users/USER_NAME/AppData/Roaming/Code/User/globalStorage/storage.json",
-          "required": true
-        },
-        {
-          "name": "vscodeExePath",
-          "title": "Visual Studio Code Executable Path",
-          "description": "Path to Visual Studio Code executable.",
-          "type": "file",
-          "default": "",
-          "placeholder": "C:/Program Files/Microsoft VS Code/code.exe",
-          "required": true
-        }
-      ]
+      "mode": "view"
     },
     {
       "name": "cursor",
       "title": "Cursor",
       "description": "Quickly open recent projects in Cursor.",
+      "mode": "view"
+    },
+    {
+      "name": "chrome",
+      "title": "Google Chrome",
+      "description": "Quickly open bookmarks in Google Chrome.",
       "mode": "view",
       "preferences": [
         {
-          "name": "cursorStoragePath",
-          "title": "Cursor Storage Path",
-          "description": "Path to Cursor recent projects storage file.",
-          "type": "file",
+          "name": "chromeBookmarkPath",
+          "title": "Google Chrome Bookmark Path",
+          "description": "Path to Google Chrome bookmarks file.",
+          "type": "textfield",
           "default": "",
-          "placeholder": "C:/Users/USER_NAME/AppData/Roaming/Cursor/User/globalStorage/storage.json",
           "required": true
         },
         {
-          "name": "cursorExePath",
-          "title": "Cursor Executable Path",
-          "description": "Path to Cursor executable.",
-          "type": "file",
+          "name": "chromeExePath",
+          "title": "Google Chrome Executable Path",
+          "description": "Path to Google Chrome executable.",
+          "type": "textfield",
+          "default": ""
+        }
+      ]
+    },
+    {
+      "name": "edge",
+      "title": "Microsoft Edge",
+      "description": "Quickly open bookmarks in Microsoft Edge.",
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "edgeBookmarkPath",
+          "title": "Microsoft Edge Bookmark Path",
+          "description": "Path to Microsoft Edge bookmarks file.",
+          "type": "textfield",
           "default": "",
-          "placeholder": "C:/Users/USER_NAME/Local/Programs/cursor/Cursor.exe",
           "required": true
+        },
+        {
+          "name": "edgeExePath",
+          "title": "Microsoft Edge Executable Path",
+          "description": "Path to Microsoft Edge executable.",
+          "type": "textfield",
+          "default": ""
         }
       ]
     }
@@ -97,5 +103,39 @@
   },
   "lint-staged": {
     "*": "eslint --fix"
-  }
+  },
+  "preferences": [
+    {
+      "name": "vscodeStoragePath",
+      "title": "Visual Studio Code Storage Path",
+      "description": "Path to \"state.vscdb\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "vscodeExePath",
+      "title": "Visual Studio Code Exe Path",
+      "description": "Path to \"code.exe\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "cursorStoragePath",
+      "title": "Cursor Storage Path",
+      "description": "Path to \"state.vscdb\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "cursorExePath",
+      "title": "Cursor Exe Path",
+      "description": "Path to \"Cursor.exe\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    }
+  ]
 }

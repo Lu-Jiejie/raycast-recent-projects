@@ -2,11 +2,11 @@ import type { Adapter } from '..'
 import { getPreferenceValues } from '@raycast/api'
 import { getVSCodeLikeRecentProjects } from './vscode'
 
-const preferences = getPreferenceValues<Preferences.Cursor>()
+const preferences = getPreferenceValues<Preferences>()
 export const cursorAdapter: Adapter = {
   appName: 'Cursor',
-  appExePath: preferences.cursorExePath,
   appIcon: 'icons/cursor.png',
+  appStoragePath: preferences.cursorStoragePath,
   getRecentProjects: () => getVSCodeLikeRecentProjects({
     appName: 'Cursor',
     appIcon: 'icons/cursor.png',

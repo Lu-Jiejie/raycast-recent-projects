@@ -5,21 +5,17 @@ import { vscodeAdapter } from './editor/vscode'
 export interface Adapter {
   appName: string
   appIcon: string
-  appExePath: string
-  getRecentProjects: () => Project[]
-}
-
-export interface AppConfig {
-  adapter: Adapter
+  appStoragePath: string
+  getRecentProjects: () => Promise<Project[]>
   searchBarPlaceholder?: string
   openTitle?: string
 }
 
-export const appsConfig: Record<string, AppConfig> = {
-  vscode: {
-    adapter: vscodeAdapter,
-  },
-  cursor: {
-    adapter: cursorAdapter,
-  },
+// export interface AppConfig {
+//   adapter: Adapter
+// }
+
+export const adapterMap: Record<string, Adapter> = {
+  vscode: vscodeAdapter,
+  cursor: cursorAdapter,
 }
