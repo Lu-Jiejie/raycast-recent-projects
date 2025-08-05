@@ -1,13 +1,3 @@
-import { List } from '@raycast/api'
-import { useEffect } from 'react'
+import { createBookmarkListView } from './components/create/createBookmarkListView'
 
-export default function Chrome() {
-  useEffect(() => {
-  }, [])
-
-  return (
-    <List>
-      <List.Item title="Open Chrome" />
-    </List>
-  )
-}
+export default createBookmarkListView('chrome')

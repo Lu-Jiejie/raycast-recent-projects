@@ -48,8 +48,8 @@ export async function getVSCodeLikeRecentProjects({
         name: projectPath.split('/').pop() || projectPath,
         path: projectPath,
         appExePath: appExePath || await resolveAppExePath(appName),
-        appIcon,
-        id: projectPath,
+        icon: appIcon,
+        id: `${appName}-${projectPath}`,
       })
     }
   }
@@ -61,7 +61,7 @@ export const vscodeAdapter: Adapter = {
   appName: 'Visual Studio Code',
   appIcon: 'icons/vscode.png',
   appStoragePath: preferences.vscodeStoragePath,
-  getRecentProjects: async () => getVSCodeLikeRecentProjects({
+  getRecentProjects: () => getVSCodeLikeRecentProjects({
     appName: 'Visual Studio Code',
     appIcon: 'icons/vscode.png',
     appExePath: preferences.vscodeExePath,

@@ -5,7 +5,7 @@ export interface Project {
   id: string
   appName: string
   appExePath: string
-  appIcon: string
+  icon: string
   /** only for bookmarks, maybe */
   tags?: string[]
   /** only for bookmarks, maybe */

@@ -20,12 +20,19 @@ export function useProjectList(adapter: Adapter) {
   } = useFavoriteList()
 
   useEffect(() => {
+    let isMounted = true
+
     async function loadRawProjects() {
       setIsLoading(true)
 
       const result = await withErrorHandling(
         () => adapter.getRecentProjects(),
       )
+
+      // 如果组件已卸载，不更新状态
+      if (!isMounted)
+        return
+
       if (!result.ok) {
         setError({
           title: 'Failed to Load Recent Projects',
@@ -41,6 +48,10 @@ export function useProjectList(adapter: Adapter) {
     }
 
     loadRawProjects()
+
+    return () => {
+      isMounted = false
+    }
   }, [adapter])
 
   useEffect(() => {
@@ -66,7 +77,7 @@ export function useProjectList(adapter: Adapter) {
     // 合并收藏状态并按收藏状态分组
     const enhancedProjects = rawProjects.map(project => ({
       ...project,
-      isFavorite: isFavorite(adapter.appName, project.path),
+      isFavorite: isFavorite(project),
     }))
 
     const [favoriteProjects, regularProjects] = enhancedProjects.reduce<[Project[], Project[]]>(
@@ -84,12 +95,6 @@ export function useProjectList(adapter: Adapter) {
       isReady: true,
     }
   }, [rawProjects, isFavorite, adapter.appName, favoriteListLoading])
-
-  // const handleToggleFavorite = useCallback(async (project: Project) => {
-  //   const wasAlreadyFavorite = isFavorite(adapter.appName, project.path)
-  //   await toggleFavorite(project)
-  //   return wasAlreadyFavorite
-  // }, [isFavorite, toggleFavorite, adapter.appName])
 
   return {
     favoriteProjects: groupedProjects.favoriteProjects,

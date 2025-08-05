@@ -30,47 +30,13 @@
       "name": "chrome",
       "title": "Google Chrome",
       "description": "Quickly open bookmarks in Google Chrome.",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "chromeBookmarkPath",
-          "title": "Google Chrome Bookmark Path",
-          "description": "Path to Google Chrome bookmarks file.",
-          "type": "textfield",
-          "default": "",
-          "required": true
-        },
-        {
-          "name": "chromeExePath",
-          "title": "Google Chrome Executable Path",
-          "description": "Path to Google Chrome executable.",
-          "type": "textfield",
-          "default": ""
-        }
-      ]
+      "mode": "view"
     },
     {
       "name": "edge",
       "title": "Microsoft Edge",
       "description": "Quickly open bookmarks in Microsoft Edge.",
-      "mode": "view",
-      "preferences": [
-        {
-          "name": "edgeBookmarkPath",
-          "title": "Microsoft Edge Bookmark Path",
-          "description": "Path to Microsoft Edge bookmarks file.",
-          "type": "textfield",
-          "default": "",
-          "required": true
-        },
-        {
-          "name": "edgeExePath",
-          "title": "Microsoft Edge Executable Path",
-          "description": "Path to Microsoft Edge executable.",
-          "type": "textfield",
-          "default": ""
-        }
-      ]
+      "mode": "view"
     }
   ],
   "scripts": {
@@ -133,6 +99,38 @@
       "name": "cursorExePath",
       "title": "Cursor Exe Path",
       "description": "Path to \"Cursor.exe\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "chromeBookmarkPath",
+      "title": "Google Chrome Bookmark Path",
+      "description": "Path to \"Bookmarks\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "chromeExePath",
+      "title": "Google Chrome Exe Path",
+      "description": "Path to \"chrome.exe\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "edgeBookmarkPath",
+      "title": "Microsoft Edge Bookmark Path",
+      "description": "Path to \"Bookmarks\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "edgeExePath",
+      "title": "Microsoft Edge Exe Path",
+      "description": "Path to \"msedge.exe\"",
       "type": "textfield",
       "default": "",
       "required": false

@@ -59,14 +59,15 @@ export function useFavoriteList() {
       .map(item => item.id)
   }, [favoriteList])
 
-  const isFavorite = useCallback((appName: string, path: string) => {
-    return favoriteList.some(item => item.appName === appName && item.id === path)
+  const isFavorite = useCallback((project: Project) => {
+    return favoriteList.some(item => item.id === project.id)
   }, [favoriteList])
 
   const addToFavoriteList = useCallback(async (project: Project) => {
-    if (!isFavorite(project.appName, project.path)) {
+    if (!isFavorite(project)) {
       const { isFavorite, ...newFavoriteItem } = project
       const newFavoriteList = [newFavoriteItem, ...favoriteList]
+
       await saveFavoriteList(newFavoriteList)
     }
   }, [favoriteList, isFavorite, saveFavoriteList])
@@ -82,7 +83,7 @@ export function useFavoriteList() {
    * Return true if the project was added to favorites, false if it was removed.
    */
   const toggleFavorite = useCallback(async (project: Project) => {
-    if (isFavorite(project.appName, project.path)) {
+    if (isFavorite(project)) {
       await removeFromFavoriteList(project.appName, project.path)
       return false
     }

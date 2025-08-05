@@ -1,48 +1,41 @@
+import type { Image } from '@raycast/api'
 import type { Project } from '../../types'
 import { Action, ActionPanel, Color, Icon, List } from '@raycast/api'
-import { showSuccessToast, toWindowsPath } from '../../logic'
+import { showSuccessToast } from '../../logic'
 
-interface ProjectListItemProps {
+interface BookmarkListItemProps {
   project: Project
+  icon?: Image.ImageLike
   onToggleFavorite: (project: Project) => void
 }
 
 async function handleCopyPath(path: string) {
-  await showSuccessToast('Copied Project Path', path)
+  await showSuccessToast('Copied Bookmark URL', path)
 }
 
-export function ProjectListItem({
+export function BookmarkListItem({
   project,
+  icon = '',
   onToggleFavorite,
-}: ProjectListItemProps) {
+}: BookmarkListItemProps) {
   return (
     <List.Item
       key={project.id}
-      icon={project.icon || Icon.Document}
+      icon={icon}
       title={project.name}
       subtitle={project.path}
-      accessories={project.isFavorite
-        ? [{ icon: { source: Icon.Star, tintColor: Color.Yellow }, tooltip: 'Favorite' }]
-        : undefined}
+      accessories={[
+        ...(project.tags ? project.tags.map(tag => ({ tag })) : []),
+        ...(project.isFavorite
+          ? [{ icon: { source: Icon.Star, tintColor: Color.Yellow }, tooltip: 'Favorite' }]
+          : []),
+      ]}
       actions={(
         <ActionPanel>
-          <ActionPanel.Section title="Project Actions">
-            <Action.Open
-              title={`Open in ${project.appName}`}
-              icon={project.icon}
-              target={project.path}
-              application={{
-                name: project.appName,
-                path: toWindowsPath(project.appExePath),
-              }}
-            />
-            <Action.ShowInFinder
-              title="Show in Explorer"
-              icon={Icon.Folder}
-              path={project.path}
-            />
+          <ActionPanel.Section title="Bookmark Actions">
+            <Action.OpenInBrowser url={project.path} />
             <Action.CopyToClipboard
-              title="Copy Project Path"
+              title="Copy Bookmark URL"
               content={project.path}
               onCopy={() => handleCopyPath(project.path)}
               shortcut={{

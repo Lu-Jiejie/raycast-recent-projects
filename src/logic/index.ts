@@ -31,7 +31,6 @@ export function showErrorToast(title: string, message: string) {
 }
 
 type Result<T> = { ok: true, data: T } | { ok: false, error: string }
-
 export async function withErrorHandling<T>(fn: () => Promise<T>): Promise<Result<T>> {
   try {
     const data = await fn()

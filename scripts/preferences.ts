@@ -16,14 +16,16 @@ interface WorkspaceConfigItem {
   }
 }
 
-interface BookmarkConfigItem {
+interface BrowserConfigItem {
   name: string
   title: string
   description?: string
   bookmarkPath: {
+    placeholder?: string
     description?: string
   }
   exePath: {
+    placeholder?: string
     description?: string
   }
 }
@@ -103,46 +105,61 @@ function generateWorkspacePreference(app: WorkspaceConfigItem) {
   ]
 }
 
-const bookmarkConfig: BookmarkConfigItem[] = [
+const bookmarkConfig: BrowserConfigItem[] = [
   {
     name: 'chrome',
     title: 'Google Chrome',
-    bookmarkPath: { },
-    exePath: { },
+    bookmarkPath: {
+      description: 'Path to "Bookmarks"',
+      placeholder: 'Path to "Bookmarks"',
+    },
+    exePath: {
+      description: 'Path to "chrome.exe"',
+      placeholder: 'Path to "chrome.exe"',
+    },
   },
   {
     name: 'edge',
     title: 'Microsoft Edge',
-    bookmarkPath: { },
-    exePath: { },
+    bookmarkPath: {
+      description: 'Path to "Bookmarks"',
+      placeholder: 'Path to "Bookmarks"',
+    },
+    exePath: {
+      description: 'Path to "msedge.exe"',
+      placeholder: 'Path to "msedge.exe"',
+    },
   },
 ]
 
-function generateBookmarkCommand(browser: BookmarkConfigItem) {
+function generateBrowserCommand(browser: BrowserConfigItem) {
   return {
     name: browser.name,
     title: browser.title,
     description: browser.description || `Quickly open bookmarks in ${browser.title}.`,
     mode: 'view',
-    preferences: [
-      {
-        name: `${browser.name}BookmarkPath`,
-        title: `${browser.title} Bookmark Path`,
-        description: browser.bookmarkPath.description || `Path to ${browser.title} bookmarks file.`,
-        type: 'textfield',
-        default: '',
-        required: true,
-      },
-      {
-        name: `${browser.name}ExePath`,
-        title: `${browser.title} Executable Path`,
-        description: browser.exePath.description || `Path to ${browser.title} executable.`,
-        type: 'textfield',
-        default: '',
-        // required: true,
-      },
-    ],
   }
+}
+
+function generateBrowserPreference(browser: BrowserConfigItem) {
+  return [
+    {
+      name: `${browser.name}BookmarkPath`,
+      title: `${browser.title} Bookmark Path`,
+      description: browser.bookmarkPath.description || `Path to ${browser.title} bookmarks file.`,
+      type: 'textfield',
+      default: '',
+      required: false,
+    },
+    {
+      name: `${browser.name}ExePath`,
+      title: `${browser.title} Exe Path`,
+      description: browser.exePath.description || `Path to ${browser.title} executable.`,
+      type: 'textfield',
+      default: '',
+      required: false,
+    },
+  ]
 }
 
 function updatePackageJson() {
@@ -153,22 +170,24 @@ function updatePackageJson() {
 
     // const favoriteCommand = generateFavoritesCommand(favoriteConfig)
     const workspaceCommands = workspaceConfig.map(generateWorkspaceCommand)
-    const bookmarkCommands = bookmarkConfig.map(generateBookmarkCommand)
+    const browserCommands = bookmarkConfig.map(generateBrowserCommand)
 
     const workspacePreferences = workspaceConfig.flatMap(generateWorkspacePreference)
+    const browserPreferences = bookmarkConfig.flatMap(generateBrowserPreference)
 
     packageJson.commands = [
       ...workspaceCommands,
-      ...bookmarkCommands,
+      ...browserCommands,
     ]
 
     packageJson.preferences = [
       ...workspacePreferences,
+      ...browserPreferences,
     ]
 
     fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`)
 
-    const commands = [...workspaceCommands, ...bookmarkCommands]
+    const commands = [...workspaceCommands, ...browserCommands]
     console.log('✅ Successfully updated package.json')
     console.log(`📦 Generated ${commands.length} commands:`)
     commands.forEach((cmd) => {

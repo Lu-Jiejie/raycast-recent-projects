@@ -1,6 +1,8 @@
+import type { Adapter } from '..'
 import type { Project } from '../../types'
 import { readFile } from 'node:fs/promises'
 import { getPreferenceValues } from '@raycast/api'
+import { resolveAppExePath } from '../../logic/resolveAppExePath'
 
 type ChromeBookmarkItem = {
   children?: ChromeBookmarkItem[]
@@ -13,10 +15,16 @@ type ChromeBookmarkItem = {
   | { type: 'folder' }
 )
 
-export async function getRecentProjects() {
-  const preferences = getPreferenceValues<Preferences.Chrome>()
-  const bookmarkPath = preferences.chromeBookmarkPath
-  const content = JSON.parse(await readFile(bookmarkPath, 'utf-8'))
+export async function getChromeLikeBookmarks({
+  appName,
+  appBookmarkPath,
+  appExePath,
+}: {
+  appName: string
+  appBookmarkPath: string
+  appExePath: string
+}) {
+  const content = JSON.parse(await readFile(appBookmarkPath, 'utf-8'))
   const bookmark: ChromeBookmarkItem[] = [
     ...content.roots.bookmark_bar.children || [],
     ...content.roots.other.children || [],
@@ -28,11 +36,11 @@ export async function getRecentProjects() {
     for (const child of children) {
       if (child.type === 'url') {
         result.push({
-          appName: 'Google Chrome',
-          appIcon: 'icons/chrome.png',
-          appExePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+          appName,
+          icon: '',
+          appExePath,
           type: 'bookmark',
-          id: child.id,
+          id: `${appName}-${child.id}`,
           name: child.name,
           path: child.url,
           tags,
@@ -44,4 +52,18 @@ export async function getRecentProjects() {
     }
   }
   runThrough(bookmark, [])
+
+  return result
+}
+
+const preferences = getPreferenceValues<Preferences>()
+export const chromeBookmarkAdapter: Adapter = {
+  appName: 'Google Chrome',
+  appIcon: '',
+  appStoragePath: preferences.chromeBookmarkPath,
+  getRecentProjects: async () => getChromeLikeBookmarks({
+    appName: 'Google Chrome',
+    appBookmarkPath: preferences.chromeBookmarkPath,
+    appExePath: preferences.chromeExePath || await resolveAppExePath('Google Chrome'),
+  }),
 }
