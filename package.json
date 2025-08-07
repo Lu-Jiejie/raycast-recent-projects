@@ -16,25 +16,25 @@
   "commands": [
     {
       "name": "vscode",
-      "title": "Visual Studio Code",
+      "title": "Visual Studio Code Recent Projects",
       "description": "Quickly open recent projects in Visual Studio Code.",
       "mode": "view"
     },
     {
       "name": "cursor",
-      "title": "Cursor",
+      "title": "Cursor Recent Projects",
       "description": "Quickly open recent projects in Cursor.",
       "mode": "view"
     },
     {
       "name": "chrome",
-      "title": "Google Chrome",
+      "title": "Google Chrome Bookmarks",
       "description": "Quickly open bookmarks in Google Chrome.",
       "mode": "view"
     },
     {
       "name": "edge",
-      "title": "Microsoft Edge",
+      "title": "Microsoft Edge Bookmarks",
       "description": "Quickly open bookmarks in Microsoft Edge.",
       "mode": "view"
     }

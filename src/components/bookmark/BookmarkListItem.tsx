@@ -1,7 +1,7 @@
 import type { Image } from '@raycast/api'
 import type { Project } from '../../types'
 import { Action, ActionPanel, Color, Icon, List } from '@raycast/api'
-import { showSuccessToast } from '../../logic'
+import { getColorForStr, showSuccessToast } from '../../logic'
 
 interface BookmarkListItemProps {
   project: Project
@@ -25,7 +25,14 @@ export function BookmarkListItem({
       title={project.name}
       subtitle={project.path}
       accessories={[
-        ...(project.tags ? project.tags.map(tag => ({ tag })) : []),
+        ...(project.tags
+          ? project.tags.map(tag => ({
+              tag: {
+                value: tag,
+                color: getColorForStr(tag),
+              },
+            }))
+          : []),
         ...(project.isFavorite
           ? [{ icon: { source: Icon.Star, tintColor: Color.Yellow }, tooltip: 'Favorite' }]
           : []),

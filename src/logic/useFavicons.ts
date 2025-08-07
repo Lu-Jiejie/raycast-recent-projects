@@ -1,20 +1,23 @@
 import type { Image } from '@raycast/api'
 import type { Project } from '../types'
-import { useEffect, useMemo, useState } from 'react'
-import { useFaviconCache } from './useFaviconCache'
+import { LocalStorage } from '@raycast/api'
+import { getFavicon as rawGetFavicon } from '@raycast/utils'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-/**
- * 批量获取多个书签的 favicons，并以书签 ID 为键返回结果
- *
- * @param bookmarks 需要获取 favicon 的书签列表
- * @returns 一个以书签 ID 为键，favicon 为值的映射对象
- */
+function getDomain(url: string): string {
+  try {
+    return new URL(url).hostname
+  }
+  catch {
+    return ''
+  }
+}
+
+const FAVICON_CACHE_KEY = 'bookmark-favicons'
 export function useFavicons(bookmarks: Project[]) {
   const [favicons, setFavicons] = useState<Record<string, Image.ImageLike>>({})
   const [isLoading, setIsLoading] = useState(true)
-  const { getFavicon } = useFaviconCache()
-
-  // 获取需要处理的书签 URLs 和 IDs
+  const faviconCache = useRef<Record<string, string | Image.ImageLike> | null>(null)
   const bookmarkData = useMemo(() => {
     return bookmarks.map(bookmark => ({
       id: bookmark.id,
@@ -22,39 +25,77 @@ export function useFavicons(bookmarks: Project[]) {
     }))
   }, [bookmarks])
 
-  // 只在书签列表变化时批量获取 favicon
+  const saveCache = useCallback(async () => {
+    if (faviconCache.current) {
+      try {
+        await LocalStorage.setItem(FAVICON_CACHE_KEY, JSON.stringify(faviconCache.current))
+      }
+      catch (err) {
+        console.error('Failed to save favicon cache', err)
+      }
+    }
+  }, [])
+
+  const getFaviconWithoutSave = useCallback(async (url: string) => {
+    try {
+      const domain = getDomain(url)
+      if (!domain) {
+        return ''
+      }
+
+      if (!faviconCache.current) {
+        const cachedData = await LocalStorage.getItem<string>(FAVICON_CACHE_KEY)
+        faviconCache.current = cachedData ? JSON.parse(cachedData) : {}
+      }
+
+      if (faviconCache.current![domain]) {
+        return faviconCache.current![domain]
+      }
+
+      const favicon = rawGetFavicon(url, {
+        fallback: '',
+      })
+
+      faviconCache.current![domain] = favicon
+      return favicon
+    }
+    catch (error) {
+      console.error('Error in getFaviconWithoutSave:', error)
+      return ''
+    }
+  }, [])
+
   useEffect(() => {
     let isMounted = true
     setIsLoading(true)
 
-    // 检查是否有新书签需要获取 favicon
     const needFetchIds = bookmarkData.filter(bookmark => !favicons[bookmark.id]).map(b => b.id)
 
-    // 如果没有新书签需要处理，直接返回
     if (needFetchIds.length === 0) {
       setIsLoading(false)
       return
     }
 
-    // 批量获取所有需要的 favicon
     async function fetchFavicons() {
+      // await LocalStorage.removeItem(FAVICON_CACHE_KEY)
       try {
-        // 只处理未缓存的书签
         const needFetchBookmarks = bookmarkData.filter(bookmark => !favicons[bookmark.id])
 
         const entries = await Promise.all(
           needFetchBookmarks.map(async (bookmark) => {
-            const favicon = await getFavicon(bookmark.path)
+            const favicon = await getFaviconWithoutSave(bookmark.path)
             return [bookmark.id, favicon] as const
           }),
         )
 
         if (isMounted) {
-          // 合并新获取的与已有的 favicons
           setFavicons(prev => ({
             ...prev,
             ...Object.fromEntries(entries),
           }))
+
+          await saveCache()
+
           setIsLoading(false)
         }
       }
@@ -71,16 +112,10 @@ export function useFavicons(bookmarks: Project[]) {
     return () => {
       isMounted = false
     }
-  }, [bookmarkData, getFavicon])
-
-  // 提供一个获取单个 favicon 的便捷方法
-  const getFaviconById = (id: string): Image.ImageLike => {
-    return favicons[id] || ''
-  }
+  }, [bookmarkData, getFaviconWithoutSave, saveCache])
 
   return {
     favicons,
-    getFaviconById,
     isLoading,
   }
 }

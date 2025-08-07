@@ -25,11 +25,6 @@ export async function getChromeLikeBookmarks({
   appExePath: string
 }) {
   const content = JSON.parse(await readFile(appBookmarkPath, 'utf-8'))
-  const bookmark: ChromeBookmarkItem[] = [
-    ...content.roots.bookmark_bar.children || [],
-    ...content.roots.other.children || [],
-    ...content.roots.synced.children || [],
-  ]
 
   const result: Project[] = []
   const runThrough = (children: ChromeBookmarkItem[], tags: string[]) => {
@@ -44,14 +39,21 @@ export async function getChromeLikeBookmarks({
           name: child.name,
           path: child.url,
           tags,
+          date: child.date_last_used === '0' ? child.date_last_used : child.date_added,
         })
       }
       else if (child.type === 'folder' && child.children) {
-        runThrough(child.children, [...tags, child.name])
+        runThrough(child.children, [child.name, ...tags])
       }
     }
   }
-  runThrough(bookmark, [])
+
+  for (const rootKey of Object.keys(content.roots)) {
+    const rootItem = content.roots[rootKey]
+    if (rootItem.children?.length) {
+      runThrough(rootItem.children, [rootItem.name])
+    }
+  }
 
   return result
 }

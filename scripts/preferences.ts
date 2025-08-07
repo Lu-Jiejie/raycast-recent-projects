@@ -78,7 +78,7 @@ const workspaceConfig: WorkspaceConfigItem[] = [
 function generateWorkspaceCommand(app: WorkspaceConfigItem) {
   return {
     name: app.name,
-    title: app.title,
+    title: `${app.title} Recent Projects`,
     description: app.description || `Quickly open recent projects in ${app.title}.`,
     mode: 'view',
   }
@@ -135,7 +135,7 @@ const bookmarkConfig: BrowserConfigItem[] = [
 function generateBrowserCommand(browser: BrowserConfigItem) {
   return {
     name: browser.name,
-    title: browser.title,
+    title: `${browser.title} Bookmarks`,
     description: browser.description || `Quickly open bookmarks in ${browser.title}.`,
     mode: 'view',
   }

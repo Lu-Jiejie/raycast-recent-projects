@@ -47,16 +47,29 @@ pnpm run dev
 
 ## Configuration
 
-You should configure executable path and storage path for each application in the setting panel to use them.
+You should configure **exe path** (keep empty to auto-detect) and **storage path** for each application in the setting panel to use them.
 
 The following are the example paths for each application:
+
+### Workspace
 
 #### Visual Studio Code
 
 + Storage Path: `C:/Users/USER_NAME/AppData/Roaming/Code/User/globalStorage/storage.json`
-+ Executable Path: `C:/Program Files/Microsoft VS Code/code.exe`
++ Exe Path: `C:/Program Files/Microsoft VS Code/code.exe`
 
 #### Cursor
 
 + Storage Path: `C:/Users/USER_NAME/AppData/Roaming/Cursor/User/globalStorage/storage.json`
-+ Executable Path: `C:/Program Files/Cursor/Cursor.exe`
++ Exe Path: `C:/Program Files/Cursor/Cursor.exe`
+
+### Bookmark
+
+#### Google Chrome
+
++ Bookmark Path: `C:/Users/USER_NAME/AppData/Local/Google/Chrome/User Data/Default/Bookmarks`
++ Exe Path: `C:/Program Files/Google/Chrome/Application/chrome.exe`
+
+#### Microsoft Edge
++ Bookmark Path: `C:/Users/USER_NAME/AppData/Local/Microsoft/Edge/User Data/Default/Bookmarks`
++ Exe Path: `C:/Program Files/Microsoft/Edge/Application/msedge.exe`

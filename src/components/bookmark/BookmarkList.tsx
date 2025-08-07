@@ -25,7 +25,7 @@ export function BookmarkList({
     isLoading,
     toggleFavorite,
     error,
-  } = useProjectList(adapter)
+  } = useProjectList(adapter, 'bookmark')
 
   useEffect(() => {
     if (error) {
@@ -37,11 +37,18 @@ export function BookmarkList({
   }, [error])
 
   const allTags = useMemo(() => {
-    const tags = new Set<string>()
+    const pathMap = new Map<string, number>()
+
     for (const item of [...favoriteProjects, ...regularProjects]) {
-      item.tags?.forEach(tag => tags.add(tag))
+      if (item.tags && item.tags.length > 0) {
+        const reversedTags = [...item.tags].reverse()
+        const fullPath = reversedTags.join(' / ')
+
+        pathMap.set(fullPath, (pathMap.get(fullPath) || 0) + 1)
+      }
     }
-    return Array.from(tags)
+
+    return Array.from(pathMap.keys()).sort()
   }, [favoriteProjects, regularProjects])
 
   const { filteredFavorites, filteredRegulars, totalItems } = useMemo(() => {
@@ -63,8 +70,18 @@ export function BookmarkList({
 
     // Apply tag filter
     if (selectedTag) {
-      favs = favs.filter(item => item.tags?.includes(selectedTag))
-      regs = regs.filter(item => item.tags?.includes(selectedTag))
+      const filterByTag = (item: Project) => {
+        if (!item.tags || item.tags.length === 0)
+          return false
+
+        const reversedTags = [...item.tags].reverse()
+        const fullPath = reversedTags.join(' / ')
+
+        return fullPath === selectedTag
+      }
+
+      favs = favs.filter(filterByTag)
+      regs = regs.filter(filterByTag)
     }
 
     return {
@@ -118,13 +135,17 @@ export function BookmarkList({
         allTags.length > 0
           ? (
               <List.Dropdown
-                tooltip="Filter by Folder"
+                tooltip="Filter by Folder Path"
                 storeValue
                 onChange={setSelectedTag}
               >
                 <List.Dropdown.Item title="All" value="" />
-                {allTags.map(tag => (
-                  <List.Dropdown.Item key={tag} title={tag} value={tag} />
+                {allTags.map(tagPath => (
+                  <List.Dropdown.Item
+                    key={tagPath}
+                    title={tagPath}
+                    value={tagPath}
+                  />
                 ))}
               </List.Dropdown>
             )

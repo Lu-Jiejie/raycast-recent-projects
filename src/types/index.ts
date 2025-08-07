@@ -10,6 +10,7 @@ export interface Project {
   tags?: string[]
   /** only for bookmarks, maybe */
   date?: string
+  details?: string
   isFavorite?: boolean
 }
 
