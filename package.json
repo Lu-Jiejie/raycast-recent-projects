@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "recent-projects",
   "title": "Recent Projects",
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.15.0",
   "description": "A Raycast extension to quickly access recent projects.",
   "author": "Lu-Jiejie",
   "license": "MIT",
@@ -46,22 +46,22 @@
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks",
-    "preferences": "esno scripts/preferences.ts"
+    "preferences": "tsx scripts/preferences.ts"
   },
   "dependencies": {
-    "@raycast/api": "^1.100.3",
-    "@raycast/utils": "^2.2.0"
+    "@raycast/api": "^1.102.5",
+    "@raycast/utils": "^2.2.1"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^4.16.2",
+    "@antfu/eslint-config": "^5.2.1",
     "@raycast/eslint-config": "^2.0.4",
-    "@types/node": "^20.19.7",
-    "@types/react": "^19.1.8",
-    "eslint": "^9.31.0",
-    "esno": "^4.8.0",
-    "lint-staged": "^16.1.2",
-    "simple-git-hooks": "^2.13.0",
-    "typescript": "^5.8.3",
+    "@types/node": "^22.18.0",
+    "@types/react": "^19.1.11",
+    "eslint": "^9.34.0",
+    "lint-staged": "^16.1.5",
+    "simple-git-hooks": "^2.13.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },
   "simple-git-hooks": {
