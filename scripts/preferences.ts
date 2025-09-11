@@ -1,6 +1,6 @@
-import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
+import fs from 'fs-extra'
 
 interface WorkspaceConfigItem {
   name: string
@@ -29,24 +29,6 @@ interface BrowserConfigItem {
     description?: string
   }
 }
-// const favoriteConfig = {
-//   name: 'favorites',
-//   title: 'Favorites',
-//   description: 'Manage your favorite projects.',
-// }
-
-// function generateFavoritesCommand(favoriteConfig: {
-//   name: string
-//   title: string
-//   description: string
-// }) {
-//   return {
-//     name: favoriteConfig.name,
-//     title: favoriteConfig.title,
-//     description: favoriteConfig.description,
-//     mode: 'view',
-//   }
-// }
 
 const workspaceConfig: WorkspaceConfigItem[] = [
   {
@@ -162,6 +144,18 @@ function generateBrowserPreference(browser: BrowserConfigItem) {
   ]
 }
 
+const defaultPreferences = [
+  {
+    name: 'hideNotExistItems',
+    title: 'Hide Not Exist Items',
+    description: 'Hide items whose paths do not exist',
+    type: 'checkbox',
+    label: 'Hide Not Exist Items',
+    default: false,
+    required: false,
+  },
+]
+
 function updatePackageJson() {
   const packageJsonPath = path.join(__dirname, '..', 'package.json')
 
@@ -181,6 +175,7 @@ function updatePackageJson() {
     ]
 
     packageJson.preferences = [
+      ...defaultPreferences,
       ...workspacePreferences,
       ...browserPreferences,
     ]

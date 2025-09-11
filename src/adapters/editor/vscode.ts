@@ -2,6 +2,7 @@ import type { Adapter } from '..'
 import type { Project } from '../../types'
 import { getPreferenceValues } from '@raycast/api'
 import { executeSQL } from '@raycast/utils'
+import { exists } from 'fs-extra'
 import { toUnixPath } from '../../logic'
 import { resolveAppExePath } from '../../logic/resolveAppExePath'
 
@@ -12,11 +13,13 @@ export async function getVSCodeLikeRecentProjects({
   appIcon,
   appExePath,
   appStoragePath,
+  hideNotExistItems,
 }: {
   appName: string
   appIcon: string
   appExePath: string
   appStoragePath: string
+  hideNotExistItems: boolean
 }): Promise<Project[]> {
   if (!appStoragePath) {
     throw new Error(`${appName} storage path is not set`)
@@ -42,6 +45,13 @@ export async function getVSCodeLikeRecentProjects({
       projectPath = projectPath.charAt(0).toUpperCase() + projectPath.slice(1)
       // 换为windows的斜杠
       // projectPath = projectPath.replace(/\//g, '\\')
+
+      if (hideNotExistItems) {
+        if (!(await exists(projectPath))) {
+          continue
+        }
+      }
+
       recentProjects.push({
         type: 'workspace',
         appName,
@@ -66,5 +76,6 @@ export const vscodeAdapter: Adapter = {
     appIcon: 'icons/vscode.png',
     appExePath: preferences.vscodeExePath,
     appStoragePath: preferences.vscodeStoragePath,
+    hideNotExistItems: preferences.hideNotExistItems,
   }),
 }

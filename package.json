@@ -50,11 +50,13 @@
   },
   "dependencies": {
     "@raycast/api": "^1.102.5",
-    "@raycast/utils": "^2.2.1"
+    "@raycast/utils": "^2.2.1",
+    "fs-extra": "^11.3.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.2.1",
     "@raycast/eslint-config": "^2.0.4",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.18.0",
     "@types/react": "^19.1.11",
     "eslint": "^9.34.0",
@@ -71,6 +73,15 @@
     "*": "eslint --fix"
   },
   "preferences": [
+    {
+      "name": "hideNotExistItems",
+      "title": "Hide Not Exist Items",
+      "description": "Hide items whose paths do not exist",
+      "type": "checkbox",
+      "label": "Hide Not Exist Items",
+      "default": false,
+      "required": false
+    },
     {
       "name": "vscodeStoragePath",
       "title": "Visual Studio Code Storage Path",

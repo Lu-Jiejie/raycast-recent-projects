@@ -12,5 +12,6 @@ export const cursorAdapter: Adapter = {
     appIcon: 'icons/cursor.png',
     appExePath: preferences.cursorExePath,
     appStoragePath: preferences.cursorStoragePath,
+    hideNotExistItems: preferences.hideNotExistItems,
   }),
 }

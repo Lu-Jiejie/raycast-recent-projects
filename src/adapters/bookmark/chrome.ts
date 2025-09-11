@@ -1,7 +1,7 @@
 import type { Adapter } from '..'
 import type { Project } from '../../types'
-import { readFile } from 'node:fs/promises'
 import { getPreferenceValues } from '@raycast/api'
+import { readFile } from 'fs-extra'
 import { resolveAppExePath } from '../../logic/resolveAppExePath'
 
 type ChromeBookmarkItem = {
