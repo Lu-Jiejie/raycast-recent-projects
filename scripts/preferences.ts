@@ -1,148 +1,8 @@
 import path from 'node:path'
 import process from 'node:process'
 import fs from 'fs-extra'
-
-interface WorkspaceConfigItem {
-  name: string
-  title: string
-  description?: string
-  storagePath: {
-    placeholder?: string
-    description?: string
-  }
-  exePath: {
-    placeholder?: string
-    description?: string
-  }
-}
-
-interface BrowserConfigItem {
-  name: string
-  title: string
-  description?: string
-  bookmarkPath: {
-    placeholder?: string
-    description?: string
-  }
-  exePath: {
-    placeholder?: string
-    description?: string
-  }
-}
-
-const workspaceConfig: WorkspaceConfigItem[] = [
-  {
-    name: 'vscode',
-    title: 'Visual Studio Code',
-    storagePath: {
-      description: 'Path to "state.vscdb"',
-      placeholder: 'Path to "state.vscdb"',
-    },
-    exePath: {
-      description: 'Path to "code.exe"',
-      placeholder: 'Path to "code.exe"',
-    },
-  },
-  {
-    name: 'cursor',
-    title: 'Cursor',
-    storagePath: {
-      description: 'Path to "state.vscdb"',
-      placeholder: 'Path to "state.vscdb"',
-    },
-    exePath: {
-      description: 'Path to "Cursor.exe"',
-      placeholder: 'Path to "Cursor.exe"',
-    },
-  },
-]
-
-function generateWorkspaceCommand(app: WorkspaceConfigItem) {
-  return {
-    name: app.name,
-    title: `${app.title} (Recent Projects)`,
-    description: app.description || `Quickly open recent projects in ${app.title}.`,
-    mode: 'view',
-  }
-}
-
-function generateWorkspacePreference(app: WorkspaceConfigItem) {
-  return [
-    {
-      name: `${app.name}StoragePath`,
-      title: `${app.title} [Storage Path]`,
-      description: app.storagePath.description || `Path to ${app.title} recent projects storage file.`,
-      type: 'textfield',
-      default: '',
-      required: false,
-    },
-    {
-      name: `${app.name}ExePath`,
-      title: `${app.title} [Exe Path]`,
-      description: app.exePath.description || `Path to ${app.title} executable.`,
-      type: 'textfield',
-      default: '',
-      required: false,
-    },
-  ]
-}
-
-const bookmarkConfig: BrowserConfigItem[] = [
-  {
-    name: 'chrome',
-    title: 'Google Chrome',
-    bookmarkPath: {
-      description: 'Path to "Bookmarks"',
-      placeholder: 'Path to "Bookmarks"',
-    },
-    exePath: {
-      description: 'Path to "chrome.exe"',
-      placeholder: 'Path to "chrome.exe"',
-    },
-  },
-  {
-    name: 'edge',
-    title: 'Microsoft Edge',
-    bookmarkPath: {
-      description: 'Path to "Bookmarks"',
-      placeholder: 'Path to "Bookmarks"',
-    },
-    exePath: {
-      description: 'Path to "msedge.exe"',
-      placeholder: 'Path to "msedge.exe"',
-    },
-  },
-]
-
-function generateBrowserCommand(browser: BrowserConfigItem) {
-  return {
-    name: browser.name,
-    title: `${browser.title} (Bookmarks)`,
-    description: browser.description || `Quickly open bookmarks in ${browser.title}.`,
-    mode: 'view',
-  }
-}
-
-function generateBrowserPreference(browser: BrowserConfigItem) {
-  return [
-    {
-      name: `${browser.name}BookmarkPath`,
-      title: `${browser.title} [Bookmark Path]`,
-      description: browser.bookmarkPath.description || `Path to ${browser.title} bookmarks file.`,
-      type: 'textfield',
-      default: '',
-      required: false,
-    },
-    {
-      name: `${browser.name}ExePath`,
-      title: `${browser.title} [Exe Path]`,
-      description: browser.exePath.description || `Path to ${browser.title} executable.`,
-      type: 'textfield',
-      default: '',
-      required: false,
-    },
-  ]
-}
+// Import from the single, safe config file
+import { APPS_CONFIG } from '../src/appsConfig'
 
 const defaultPreferences = [
   {
@@ -162,36 +22,64 @@ function updatePackageJson() {
   try {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
 
-    // const favoriteCommand = generateFavoritesCommand(favoriteConfig)
-    const workspaceCommands = workspaceConfig.map(generateWorkspaceCommand)
-    const browserCommands = bookmarkConfig.map(generateBrowserCommand)
+    // Generate commands from the pure metadata
+    const generatedCommands = APPS_CONFIG.map((app) => {
+      const title = app.type === 'workspace'
+        ? `${app.name} (Recent Projects)`
+        : `[${app.name}] Bookmarks`
+      return {
+        name: app.id,
+        title,
+        description: `Quickly open ${app.type === 'workspace' ? 'recent projects' : 'bookmarks'} in ${app.name}.`,
+        mode: 'view',
+      }
+    })
 
-    const workspacePreferences = workspaceConfig.flatMap(generateWorkspacePreference)
-    const browserPreferences = bookmarkConfig.flatMap(generateBrowserPreference)
+    // Generate preferences from the pure metadata
+    const generatedPreferences = APPS_CONFIG.flatMap((app) => {
+      const storagePathTitle = app.type === 'workspace' ? 'Storage Path' : 'Bookmark Path'
+
+      return [
+        {
+          name: `${app.id}StoragePath`, // Use the corrected name
+          title: `[${app.name}] ${storagePathTitle}`,
+          description: app.storagePathDesc,
+          type: 'textfield',
+          default: '',
+          required: false,
+        },
+        {
+          name: `${app.id}ExePath`,
+          title: `[${app.name}] Exe Path`,
+          description: app.exePathDesc,
+          type: 'textfield',
+          default: '',
+          required: false,
+        },
+      ]
+    })
 
     packageJson.commands = [
       {
         name: 'index',
-        title: 'All Recent Projects',
-        description: 'Browse and open recent projects from all configured applications.',
+        title: 'Show All Recent Projects',
+        description: 'Shows recent projects from all configured applications.',
         mode: 'view',
       },
-      ...workspaceCommands,
-      ...browserCommands,
+      ...generatedCommands,
     ]
 
     packageJson.preferences = [
       ...defaultPreferences,
-      ...workspacePreferences,
-      ...browserPreferences,
+      ...generatedPreferences,
     ]
 
-    fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`)
+    fs.writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}
+`)
 
-    const commands = [...workspaceCommands, ...browserCommands]
     console.log('✅ Successfully updated package.json')
-    console.log(`📦 Generated ${commands.length} commands:`)
-    commands.forEach((cmd) => {
+    console.log(`📦 Generated ${generatedCommands.length + 1} commands:`)
+    packageJson.commands.forEach((cmd: { name: string, title: string }) => {
       console.log(`   - ${cmd.name}: ${cmd.title}`)
     })
   }
@@ -204,5 +92,3 @@ function updatePackageJson() {
 if (require.main === module) {
   updatePackageJson()
 }
-
-export { workspaceConfig as appsConfig, generateWorkspaceCommand as generateCommand, updatePackageJson }

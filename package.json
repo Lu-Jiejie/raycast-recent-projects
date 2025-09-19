@@ -16,8 +16,8 @@
   "commands": [
     {
       "name": "index",
-      "title": "All Recent Projects",
-      "description": "Browse and open recent projects from all configured applications.",
+      "title": "Show All Recent Projects",
+      "description": "Shows recent projects from all configured applications.",
       "mode": "view"
     },
     {
@@ -34,13 +34,13 @@
     },
     {
       "name": "chrome",
-      "title": "Google Chrome (Bookmarks)",
+      "title": "[Google Chrome] Bookmarks",
       "description": "Quickly open bookmarks in Google Chrome.",
       "mode": "view"
     },
     {
       "name": "edge",
-      "title": "Microsoft Edge (Bookmarks)",
+      "title": "[Microsoft Edge] Bookmarks",
       "description": "Quickly open bookmarks in Microsoft Edge.",
       "mode": "view"
     }
@@ -90,7 +90,7 @@
     },
     {
       "name": "vscodeStoragePath",
-      "title": "Visual Studio Code [Storage Path]",
+      "title": "[Visual Studio Code] Storage Path",
       "description": "Path to \"state.vscdb\"",
       "type": "textfield",
       "default": "",
@@ -98,7 +98,7 @@
     },
     {
       "name": "vscodeExePath",
-      "title": "Visual Studio Code [Exe Path]",
+      "title": "[Visual Studio Code] Exe Path",
       "description": "Path to \"code.exe\"",
       "type": "textfield",
       "default": "",
@@ -106,7 +106,7 @@
     },
     {
       "name": "cursorStoragePath",
-      "title": "Cursor [Storage Path]",
+      "title": "[Cursor] Storage Path",
       "description": "Path to \"state.vscdb\"",
       "type": "textfield",
       "default": "",
@@ -114,15 +114,15 @@
     },
     {
       "name": "cursorExePath",
-      "title": "Cursor [Exe Path]",
+      "title": "[Cursor] Exe Path",
       "description": "Path to \"Cursor.exe\"",
       "type": "textfield",
       "default": "",
       "required": false
     },
     {
-      "name": "chromeBookmarkPath",
-      "title": "Google Chrome [Bookmark Path]",
+      "name": "chromeStoragePath",
+      "title": "[Google Chrome] Bookmark Path",
       "description": "Path to \"Bookmarks\"",
       "type": "textfield",
       "default": "",
@@ -130,15 +130,15 @@
     },
     {
       "name": "chromeExePath",
-      "title": "Google Chrome [Exe Path]",
+      "title": "[Google Chrome] Exe Path",
       "description": "Path to \"chrome.exe\"",
       "type": "textfield",
       "default": "",
       "required": false
     },
     {
-      "name": "edgeBookmarkPath",
-      "title": "Microsoft Edge [Bookmark Path]",
+      "name": "edgeStoragePath",
+      "title": "[Microsoft Edge] Bookmark Path",
       "description": "Path to \"Bookmarks\"",
       "type": "textfield",
       "default": "",
@@ -146,7 +146,7 @@
     },
     {
       "name": "edgeExePath",
-      "title": "Microsoft Edge [Exe Path]",
+      "title": "[Microsoft Edge] Exe Path",
       "description": "Path to \"msedge.exe\"",
       "type": "textfield",
       "default": "",

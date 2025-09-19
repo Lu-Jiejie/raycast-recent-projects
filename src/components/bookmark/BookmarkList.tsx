@@ -102,7 +102,6 @@ export function BookmarkList({
     const resText = res ? 'Added to Favorites' : 'Removed from Favorites'
     await showSuccessToast(resText, project.name)
   }
-
   if (!adapter.appStoragePath) {
     return (
       <List

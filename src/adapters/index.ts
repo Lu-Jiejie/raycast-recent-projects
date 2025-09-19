@@ -1,32 +1,22 @@
 import type { Project } from '../types'
-import { chromeBookmarkAdapter } from './bookmark/chrome'
-import { edgeBookmarkAdapter } from './bookmark/edge'
-import { cursorAdapter } from './editor/cursor'
-import { vscodeAdapter } from './editor/vscode'
+import { fetchChromiumBookmarks } from './bookmark/chrome'
+import { fetchVscodeLikeProjects } from './editor/vscode'
 
+// --- INTERFACE ---
 export interface Adapter {
   appName: string
   appIcon: string
-  appStoragePath: string
+  appStoragePath?: string
   getRecentProjects: () => Promise<Project[]>
   searchBarPlaceholder?: string
   openTitle?: string
 }
 
-// export interface AppConfig {
-//   adapter: Adapter
-// }
-
-export const adapterMap: Record<
-  'workspace' | 'bookmark',
-  Record<string, Adapter>
-> = {
-  workspace: {
-    vscode: vscodeAdapter,
-    cursor: cursorAdapter,
-  },
-  bookmark: {
-    chrome: chromeBookmarkAdapter,
-    edge: edgeBookmarkAdapter,
-  },
+// --- MAP ---
+// This map links an app ID to its specific data-fetching function.
+export const fetcherMap = {
+  vscode: fetchVscodeLikeProjects,
+  cursor: fetchVscodeLikeProjects,
+  chrome: fetchChromiumBookmarks,
+  edge: fetchChromiumBookmarks,
 }

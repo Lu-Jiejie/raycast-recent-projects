@@ -4,17 +4,17 @@ import { Action, ActionPanel, List, openExtensionPreferences } from '@raycast/ap
 import { useEffect, useMemo, useState } from 'react'
 import { showErrorToast, showSuccessToast } from '../../logic'
 import { useProjectList } from '../../logic/useProjectList'
-import { ProjectListItem } from './WorkspaceListItem'
+import { WorkspaceListItem } from './WorkspaceListItem'
 
-interface ProjectListProps {
+interface WorkspaceListProps {
   adapter: Adapter
   searchBarPlaceholder?: string
 }
 
-export function ProjectList({
+export function WorkspaceList({
   adapter,
   searchBarPlaceholder,
-}: ProjectListProps) {
+}: WorkspaceListProps) {
   const [searchText, setSearchText] = useState('')
 
   const {
@@ -108,7 +108,7 @@ export function ProjectList({
               {filteredFavorites.length > 0 && (
                 <List.Section title="Favorites" subtitle={`${filteredFavorites.length} projects`}>
                   {filteredFavorites.map(item => (
-                    <ProjectListItem
+                    <WorkspaceListItem
                       key={item.id}
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
@@ -120,7 +120,7 @@ export function ProjectList({
               {filteredRegulars.length > 0 && (
                 <List.Section title="Recent Projects" subtitle={`${filteredRegulars.length} projects`}>
                   {filteredRegulars.map(item => (
-                    <ProjectListItem
+                    <WorkspaceListItem
                       key={item.id}
                       project={item}
                       onToggleFavorite={handleToggleFavorite}

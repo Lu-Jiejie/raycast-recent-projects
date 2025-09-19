@@ -1,8 +1,5 @@
-import type { Adapter } from '..'
 import type { Project } from '../../types'
-import { getPreferenceValues } from '@raycast/api'
 import { readFile } from 'fs-extra'
-import { resolveAppExePath } from '../../logic/resolveAppExePath'
 
 type ChromeBookmarkItem = {
   children?: ChromeBookmarkItem[]
@@ -15,13 +12,13 @@ type ChromeBookmarkItem = {
   | { type: 'folder' }
 )
 
-export async function getChromeLikeBookmarks({
+export async function fetchChromiumBookmarks({
   appName,
-  appBookmarkPath,
+  appStoragePath: appBookmarkPath,
   appExePath,
 }: {
   appName: string
-  appBookmarkPath: string
+  appStoragePath: string
   appExePath: string
 }) {
   const content = JSON.parse(await readFile(appBookmarkPath, 'utf-8'))
@@ -56,16 +53,4 @@ export async function getChromeLikeBookmarks({
   }
 
   return result
-}
-
-const preferences = getPreferenceValues<Preferences>()
-export const chromeBookmarkAdapter: Adapter = {
-  appName: 'Google Chrome',
-  appIcon: '',
-  appStoragePath: preferences.chromeBookmarkPath,
-  getRecentProjects: async () => getChromeLikeBookmarks({
-    appName: 'Google Chrome',
-    appBookmarkPath: preferences.chromeBookmarkPath,
-    appExePath: preferences.chromeExePath || await resolveAppExePath('Google Chrome'),
-  }),
 }

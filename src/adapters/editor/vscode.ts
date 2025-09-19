@@ -1,6 +1,4 @@
-import type { Adapter } from '..'
 import type { Project } from '../../types'
-import { getPreferenceValues } from '@raycast/api'
 import { executeSQL } from '@raycast/utils'
 import { exists } from 'fs-extra'
 import { toUnixPath } from '../../logic'
@@ -8,7 +6,7 @@ import { resolveAppExePath } from '../../logic/resolveAppExePath'
 
 const QUERY = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\';'
 
-export async function getVSCodeLikeRecentProjects({
+export async function fetchVscodeLikeProjects({
   appName,
   appIcon,
   appExePath,
@@ -64,18 +62,4 @@ export async function getVSCodeLikeRecentProjects({
     }
   }
   return recentProjects
-}
-
-const preferences = getPreferenceValues<Preferences>()
-export const vscodeAdapter: Adapter = {
-  appName: 'Visual Studio Code',
-  appIcon: 'icons/vscode.png',
-  appStoragePath: preferences.vscodeStoragePath,
-  getRecentProjects: async () => getVSCodeLikeRecentProjects({
-    appName: 'Visual Studio Code',
-    appIcon: 'icons/vscode.png',
-    appExePath: preferences.vscodeExePath || await resolveAppExePath('Visual Studio Code'),
-    appStoragePath: preferences.vscodeStoragePath,
-    hideNotExistItems: preferences.hideNotExistItems,
-  }),
 }

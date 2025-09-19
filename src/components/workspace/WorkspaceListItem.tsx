@@ -2,7 +2,7 @@ import type { Project } from '../../types'
 import { Action, ActionPanel, Color, Icon, List } from '@raycast/api'
 import { showSuccessToast } from '../../logic'
 
-interface ProjectListItemProps {
+interface WorkspaceListItemProps {
   project: Project
   onToggleFavorite: (project: Project) => void
 }
@@ -11,10 +11,10 @@ async function handleCopyPath(path: string) {
   await showSuccessToast('Copied Project Path', path)
 }
 
-export function ProjectListItem({
+export function WorkspaceListItem({
   project,
   onToggleFavorite,
-}: ProjectListItemProps) {
+}: WorkspaceListItemProps) {
   return (
     <List.Item
       key={project.id}

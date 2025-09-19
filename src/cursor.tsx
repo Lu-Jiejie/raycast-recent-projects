@@ -1,3 +1,10 @@
-import { createWorkspaceListView } from './components/create/createWorkspaceListView'
+import { APPS_CONFIG } from './appsConfig'
+import { AppView } from './components/AppView'
 
-export default createWorkspaceListView('cursor')
+const appConfig = APPS_CONFIG.find(app => app.id === 'cursor')
+
+export default function CursorCommand() {
+  if (!appConfig)
+    return null
+  return <AppView app={appConfig} />
+}

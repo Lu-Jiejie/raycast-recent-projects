@@ -1,3 +1,10 @@
-import { createBookmarkListView } from './components/create/createBookmarkListView'
+import { APPS_CONFIG } from './appsConfig'
+import { AppView } from './components/AppView'
 
-export default createBookmarkListView('edge')
+const appConfig = APPS_CONFIG.find(app => app.id === 'edge')
+
+export default function EdgeCommand() {
+  if (!appConfig)
+    return null
+  return <AppView app={appConfig} />
+}
