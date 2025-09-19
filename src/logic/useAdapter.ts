@@ -1,7 +1,6 @@
-import type { AppConfig } from '../appsConfig'
-import type { Adapter } from '../types'
+import type { Adapter, AppConfig } from '../types'
 import { getPreferenceValues } from '@raycast/api'
-import { fetcherMap } from '../fetchers'
+import { fetcherMap } from '../registry/fetcher'
 import { resolveAppExePath } from './resolveAppExePath'
 
 export function useAdapter(app: AppConfig): Adapter {

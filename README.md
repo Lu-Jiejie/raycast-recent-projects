@@ -40,6 +40,11 @@ pnpm install
 pnpm run dev
 ```
 
+## Command
+
+- **Show All Recent Projects**: Shows a list of supported applications for you to choose from, then shows the recent projects of the selected application.
+- **Show Recent Projects / Bookmarks of App**: Directly shows the recent projects / bookmarks of the specified application.
+
 ## Supported Applications
 
 - Visual Studio Code

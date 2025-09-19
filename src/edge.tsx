@@ -1,7 +1,7 @@
-import { APPS_CONFIG } from './appsConfig'
 import { AppView } from './components/AppView'
+import { appsConfig } from './registry'
 
-const appConfig = APPS_CONFIG.find(app => app.id === 'edge')
+const appConfig = appsConfig.find(app => app.id === 'edge')
 
 export default function EdgeCommand() {
   if (!appConfig)

@@ -1,7 +1,7 @@
 import { Action, ActionPanel, getPreferenceValues, List, openExtensionPreferences } from '@raycast/api'
 import { useMemo } from 'react'
-import { APPS_CONFIG } from './appsConfig'
 import { AppView } from './components/AppView'
+import { appsConfig } from './registry'
 
 interface Preferences {
   [key: string]: string | boolean | undefined
@@ -10,10 +10,10 @@ interface Preferences {
 export default function Command() {
   const { workspaceApps, bookmarkApps, unconfiguredApps } = useMemo(() => {
     const preferences = getPreferenceValues<Preferences>()
-    const configuredApps: typeof APPS_CONFIG = []
-    const unconfiguredApps: typeof APPS_CONFIG = []
+    const configuredApps: typeof appsConfig = []
+    const unconfiguredApps: typeof appsConfig = []
 
-    APPS_CONFIG.forEach((app) => {
+    appsConfig.forEach((app) => {
       const storagePathKey = `${app.id}StoragePath`
       const path = preferences[storagePathKey] as string | undefined
       if (path && path.trim() !== '') {

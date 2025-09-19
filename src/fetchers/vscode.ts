@@ -1,8 +1,8 @@
-import type { Project } from '../../types'
+import type { Project } from '../types'
 import { executeSQL } from '@raycast/utils'
 import { exists } from 'fs-extra'
-import { toUnixPath } from '../../logic'
-import { resolveAppExePath } from '../../logic/resolveAppExePath'
+import { toUnixPath } from '../logic'
+import { resolveAppExePath } from '../logic/resolveAppExePath'
 
 const QUERY = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\';'
 

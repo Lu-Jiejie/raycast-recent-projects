@@ -1,4 +1,4 @@
-import type { AppConfig } from '../appsConfig'
+import type { AppConfig } from '../types'
 import { useAdapter } from '../logic/useAdapter'
 import { BookmarkList } from './bookmark/BookmarkList'
 import { WorkspaceList } from './workspace/WorkspaceList'

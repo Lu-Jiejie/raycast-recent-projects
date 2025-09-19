@@ -2,7 +2,7 @@ import path from 'node:path'
 import process from 'node:process'
 import fs from 'fs-extra'
 // Import from the single, safe config file
-import { APPS_CONFIG } from '../src/appsConfig'
+import { appsConfig } from '../src/registry'
 
 const defaultPreferences = [
   {
@@ -23,7 +23,7 @@ function updatePackageJson() {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
 
     // Generate commands from the pure metadata
-    const generatedCommands = APPS_CONFIG.map((app) => {
+    const generatedCommands = appsConfig.map((app) => {
       const title = app.type === 'workspace'
         ? `${app.name} (Recent Projects)`
         : `${app.name} (Bookmarks)`
@@ -36,7 +36,7 @@ function updatePackageJson() {
     })
 
     // Generate preferences from the pure metadata
-    const generatedPreferences = APPS_CONFIG.flatMap((app) => {
+    const generatedPreferences = appsConfig.flatMap((app) => {
       const storagePathTitle = app.type === 'workspace' ? 'Storage Path' : 'Bookmark Path'
 
       return [

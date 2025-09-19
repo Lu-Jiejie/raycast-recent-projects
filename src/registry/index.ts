@@ -1,13 +1,6 @@
-export interface AppConfig {
-  id: string // e.g., 'vscode'
-  name: string // e.g., 'Visual Studio Code'
-  type: 'workspace' | 'bookmark'
-  icon: string
-  storagePathDesc: string
-  exePathDesc: string
-}
+import type { AppConfig } from '../types'
 
-export const APPS_CONFIG: AppConfig[] = [
+export const appsConfig: AppConfig[] = [
   {
     id: 'vscode',
     name: 'Visual Studio Code',
