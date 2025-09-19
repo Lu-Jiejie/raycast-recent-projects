@@ -26,7 +26,7 @@ function updatePackageJson() {
     const generatedCommands = APPS_CONFIG.map((app) => {
       const title = app.type === 'workspace'
         ? `${app.name} (Recent Projects)`
-        : `[${app.name}] Bookmarks`
+        : `${app.name} (Bookmarks)`
       return {
         name: app.id,
         title,
@@ -42,7 +42,7 @@ function updatePackageJson() {
       return [
         {
           name: `${app.id}StoragePath`, // Use the corrected name
-          title: `[${app.name}] ${storagePathTitle}`,
+          title: `${app.name} [${storagePathTitle}]`,
           description: app.storagePathDesc,
           type: 'textfield',
           default: '',
@@ -50,7 +50,7 @@ function updatePackageJson() {
         },
         {
           name: `${app.id}ExePath`,
-          title: `[${app.name}] Exe Path`,
+          title: `${app.name} [Exe Path]`,
           description: app.exePathDesc,
           type: 'textfield',
           default: '',

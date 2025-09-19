@@ -3,12 +3,8 @@ import { useAdapter } from '../logic/useAdapter'
 import { BookmarkList } from './bookmark/BookmarkList'
 import { WorkspaceList } from './workspace/WorkspaceList'
 
-interface AppViewProps {
-  app: AppConfig
-}
-
 // This is the single, generic view component that can render any app's list.
-export function AppView({ app }: AppViewProps) {
+export function AppView({ app }: { app: AppConfig }) {
   // The hook now returns the adapter object that the list components expect.
   const adapter = useAdapter(app)
 

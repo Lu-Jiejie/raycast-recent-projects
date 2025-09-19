@@ -28,7 +28,7 @@ export const APPS_CONFIG: AppConfig[] = [
     id: 'chrome',
     name: 'Google Chrome',
     type: 'bookmark',
-    icon: 'icon.png', // You might want a specific chrome icon
+    icon: 'icons/chrome.png',
     storagePathDesc: 'Path to "Bookmarks"',
     exePathDesc: 'Path to "chrome.exe"',
   },
@@ -36,7 +36,7 @@ export const APPS_CONFIG: AppConfig[] = [
     id: 'edge',
     name: 'Microsoft Edge',
     type: 'bookmark',
-    icon: 'icon.png', // You might want a specific edge icon
+    icon: 'icons/edge.png',
     storagePathDesc: 'Path to "Bookmarks"',
     exePathDesc: 'Path to "msedge.exe"',
   },

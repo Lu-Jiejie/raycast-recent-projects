@@ -1,64 +1,84 @@
-import type { AppConfig } from './appsConfig'
-import { Action, ActionPanel, getPreferenceValues, List } from '@raycast/api'
-import { useEffect, useState } from 'react'
+import { Action, ActionPanel, getPreferenceValues, List, openExtensionPreferences } from '@raycast/api'
+import { useMemo } from 'react'
 import { APPS_CONFIG } from './appsConfig'
-import { AppView } from './components/AppView' // Import the new generic view
-import { resolveAppExePath } from './logic/resolveAppExePath'
+import { AppView } from './components/AppView'
 
 interface Preferences {
   [key: string]: string | boolean | undefined
 }
 
-interface ConfiguredApp extends AppConfig {
-  exePath: string
-}
-
 export default function Command() {
-  const [configuredApps, setConfiguredApps] = useState<ConfiguredApp[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { workspaceApps, bookmarkApps, unconfiguredApps } = useMemo(() => {
+    const preferences = getPreferenceValues<Preferences>()
+    const configuredApps: typeof APPS_CONFIG = []
+    const unconfiguredApps: typeof APPS_CONFIG = []
 
-  useEffect(() => {
-    async function fetchConfiguredApps() {
-      const preferences = getPreferenceValues<Preferences>()
-      const appsWithStoragePath = APPS_CONFIG.filter((app) => {
-        const storagePathKey = `${app.id}StoragePath`
-        const path = preferences[storagePathKey] as string | undefined
-        return path && path.trim() !== ''
-      })
+    APPS_CONFIG.forEach((app) => {
+      const storagePathKey = `${app.id}StoragePath`
+      const path = preferences[storagePathKey] as string | undefined
+      if (path && path.trim() !== '') {
+        configuredApps.push(app)
+      }
+      else {
+        unconfiguredApps.push(app)
+      }
+    })
 
-      const resolvedApps = await Promise.all(
-        appsWithStoragePath.map(async (app) => {
-          const exePath = await resolveAppExePath(app.name)
-          if (exePath) {
-            return { ...app, exePath }
-          }
-          return null
-        }),
-      )
+    const workspaceApps = configuredApps.filter(app => app.type === 'workspace')
+    const bookmarkApps = configuredApps.filter(app => app.type === 'bookmark')
 
-      setConfiguredApps(resolvedApps.filter((app): app is ConfiguredApp => app !== null))
-      setIsLoading(false)
-    }
-
-    fetchConfiguredApps()
+    return { workspaceApps, bookmarkApps, unconfiguredApps }
   }, [])
 
   return (
-    <List isLoading={isLoading} searchBarPlaceholder="Select an application...">
-      {configuredApps.map(app => (
-        <List.Item
-          key={app.id}
-          title={app.name}
-          subtitle={app.type === 'workspace' ? 'Recent Projects' : 'Bookmarks'}
-          icon={{ fileIcon: app.exePath }}
-          actions={(
-            <ActionPanel>
-              {/* Push the generic AppView with the specific app config */}
-              <Action.Push title={`Show ${app.name}`} target={<AppView app={app} />} />
-            </ActionPanel>
-          )}
-        />
-      ))}
+    <List searchBarPlaceholder="Select an application...">
+      <List.Section title="Workspace">
+        {workspaceApps.map(app => (
+          <List.Item
+            key={app.id}
+            title={app.name}
+            subtitle="Recent Projects"
+            icon={app.icon}
+            actions={(
+              <ActionPanel>
+                <Action.Push title={`Show ${app.name}`} target={<AppView app={app} />} />
+                <Action title="Configure Extension" onAction={openExtensionPreferences} />
+              </ActionPanel>
+            )}
+          />
+        ))}
+      </List.Section>
+      <List.Section title="Bookmark">
+        {bookmarkApps.map(app => (
+          <List.Item
+            key={app.id}
+            title={app.name}
+            subtitle="Bookmarks"
+            icon={app.icon}
+            actions={(
+              <ActionPanel>
+                <Action.Push title={`Show ${app.name}`} target={<AppView app={app} />} />
+                <Action title="Configure Extension" onAction={openExtensionPreferences} />
+              </ActionPanel>
+            )}
+          />
+        ))}
+      </List.Section>
+      <List.Section title="Unconfigured">
+        {unconfiguredApps.map(app => (
+          <List.Item
+            key={app.id}
+            title={app.name}
+            subtitle={app.type.charAt(0).toUpperCase() + app.type.slice(1)}
+            icon={app.icon}
+            actions={(
+              <ActionPanel>
+                <Action title="Configure Extension" onAction={openExtensionPreferences} />
+              </ActionPanel>
+            )}
+          />
+        ))}
+      </List.Section>
     </List>
   )
 }

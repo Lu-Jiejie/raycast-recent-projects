@@ -1,5 +1,4 @@
-import type { Adapter } from '../../adapters'
-import type { Project } from '../../types'
+import type { Adapter, Project } from '../../types'
 import { Action, ActionPanel, List, openExtensionPreferences } from '@raycast/api'
 import { useEffect, useMemo, useState } from 'react'
 import { showErrorToast, showSuccessToast } from '../../logic'

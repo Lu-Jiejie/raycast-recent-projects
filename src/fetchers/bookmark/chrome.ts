@@ -14,14 +14,14 @@ type ChromeBookmarkItem = {
 
 export async function fetchChromiumBookmarks({
   appName,
-  appStoragePath: appBookmarkPath,
+  appStoragePath,
   appExePath,
 }: {
   appName: string
   appStoragePath: string
   appExePath: string
 }) {
-  const content = JSON.parse(await readFile(appBookmarkPath, 'utf-8'))
+  const content = JSON.parse(await readFile(appStoragePath, 'utf-8'))
 
   const result: Project[] = []
   const runThrough = (children: ChromeBookmarkItem[], tags: string[]) => {

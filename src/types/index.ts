@@ -15,3 +15,12 @@ export interface Project {
 }
 
 export type FavoriteItem = Omit<Project, 'isFavorite'>
+
+export interface Adapter {
+  appName: string
+  appIcon: string
+  appStoragePath?: string
+  getRecentProjects: () => Promise<Project[]>
+  searchBarPlaceholder?: string
+  openTitle?: string
+}

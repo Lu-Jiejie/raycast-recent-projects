@@ -1,5 +1,4 @@
-import type { Adapter } from '../adapters'
-import type { Project } from '../types'
+import type { Adapter, Project } from '../types'
 import { useEffect, useMemo, useState } from 'react'
 import { showErrorToast, withErrorHandling } from '.'
 import { useFavoriteList } from './useFavoriteList'

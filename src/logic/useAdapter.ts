@@ -1,17 +1,13 @@
-import type { Adapter } from '../adapters'
 import type { AppConfig } from '../appsConfig'
+import type { Adapter } from '../types'
 import { getPreferenceValues } from '@raycast/api'
-import { fetcherMap } from '../adapters'
+import { fetcherMap } from '../fetchers'
 import { resolveAppExePath } from './resolveAppExePath'
 
-interface Preferences {
-  [key: string]: any
-}
-
 export function useAdapter(app: AppConfig): Adapter {
-  const preferences = getPreferenceValues<Preferences>()
+  const preferences = getPreferenceValues()
 
-  const storagePathKey = app.type === 'workspace' ? `${app.id}StoragePath` : `${app.id}BookmarkPath`
+  const storagePathKey = `${app.id}StoragePath`
   const storagePath = preferences[storagePathKey] as string | undefined
   const userDefinedExePath = preferences[`${app.id}ExePath`] as string | undefined
   const hideNotExistItems = preferences.hideNotExistItems as boolean
