@@ -71,10 +71,10 @@ export const vscodeAdapter: Adapter = {
   appName: 'Visual Studio Code',
   appIcon: 'icons/vscode.png',
   appStoragePath: preferences.vscodeStoragePath,
-  getRecentProjects: () => getVSCodeLikeRecentProjects({
+  getRecentProjects: async () => getVSCodeLikeRecentProjects({
     appName: 'Visual Studio Code',
     appIcon: 'icons/vscode.png',
-    appExePath: preferences.vscodeExePath,
+    appExePath: preferences.vscodeExePath || await resolveAppExePath('Visual Studio Code'),
     appStoragePath: preferences.vscodeStoragePath,
     hideNotExistItems: preferences.hideNotExistItems,
   }),

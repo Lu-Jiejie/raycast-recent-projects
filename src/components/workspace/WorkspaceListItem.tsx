@@ -1,6 +1,6 @@
 import type { Project } from '../../types'
 import { Action, ActionPanel, Color, Icon, List } from '@raycast/api'
-import { showSuccessToast, toWindowsPath } from '../../logic'
+import { showSuccessToast } from '../../logic'
 
 interface ProjectListItemProps {
   project: Project
@@ -33,7 +33,7 @@ export function ProjectListItem({
               target={project.path}
               application={{
                 name: project.appName,
-                path: toWindowsPath(project.appExePath),
+                path: project.appExePath,
               }}
             />
             <Action.ShowInFinder

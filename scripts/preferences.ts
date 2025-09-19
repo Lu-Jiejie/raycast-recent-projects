@@ -60,7 +60,7 @@ const workspaceConfig: WorkspaceConfigItem[] = [
 function generateWorkspaceCommand(app: WorkspaceConfigItem) {
   return {
     name: app.name,
-    title: `${app.title} Recent Projects`,
+    title: `${app.title} (Recent Projects)`,
     description: app.description || `Quickly open recent projects in ${app.title}.`,
     mode: 'view',
   }
@@ -70,7 +70,7 @@ function generateWorkspacePreference(app: WorkspaceConfigItem) {
   return [
     {
       name: `${app.name}StoragePath`,
-      title: `${app.title} Storage Path`,
+      title: `[${app.title}] Storage Path`,
       description: app.storagePath.description || `Path to ${app.title} recent projects storage file.`,
       type: 'textfield',
       default: '',
@@ -78,7 +78,7 @@ function generateWorkspacePreference(app: WorkspaceConfigItem) {
     },
     {
       name: `${app.name}ExePath`,
-      title: `${app.title} Exe Path`,
+      title: `[${app.title}] Exe Path`,
       description: app.exePath.description || `Path to ${app.title} executable.`,
       type: 'textfield',
       default: '',
@@ -117,7 +117,7 @@ const bookmarkConfig: BrowserConfigItem[] = [
 function generateBrowserCommand(browser: BrowserConfigItem) {
   return {
     name: browser.name,
-    title: `${browser.title} Bookmarks`,
+    title: `[${browser.title}] Bookmarks`,
     description: browser.description || `Quickly open bookmarks in ${browser.title}.`,
     mode: 'view',
   }
@@ -127,7 +127,7 @@ function generateBrowserPreference(browser: BrowserConfigItem) {
   return [
     {
       name: `${browser.name}BookmarkPath`,
-      title: `${browser.title} Bookmark Path`,
+      title: `[${browser.title}] Bookmark Path`,
       description: browser.bookmarkPath.description || `Path to ${browser.title} bookmarks file.`,
       type: 'textfield',
       default: '',

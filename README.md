@@ -47,7 +47,7 @@ pnpm run dev
 
 ## Configuration
 
-You should configure **exe path** (keep empty to auto-detect) and **storage path** for each application in the setting panel to use them.
+You should configure **exe path** (keep empty to **auto-detect**) and **storage path** for each application in the setting panel to use them.
 
 The following are the example paths for each application:
 
