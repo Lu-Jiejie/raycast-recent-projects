@@ -7,6 +7,7 @@ interface BookmarkListItemProps {
   project: Project
   icon?: Image.ImageLike
   onToggleFavorite: (project: Project) => void
+  keywords?: string[]
 }
 
 async function handleCopyPath(path: string) {
@@ -17,6 +18,7 @@ export function BookmarkListItem({
   project,
   icon = '',
   onToggleFavorite,
+  keywords,
 }: BookmarkListItemProps) {
   return (
     <List.Item
@@ -24,6 +26,7 @@ export function BookmarkListItem({
       icon={icon}
       title={project.name}
       subtitle={project.path}
+      keywords={keywords}
       accessories={[
         ...(project.tags
           ? project.tags.map(tag => ({

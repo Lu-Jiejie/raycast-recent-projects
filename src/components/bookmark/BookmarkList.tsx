@@ -15,7 +15,6 @@ export function BookmarkList({
   adapter,
   searchBarPlaceholder,
 }: BookmarkListProps) {
-  const [searchText, setSearchText] = useState('')
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
 
   const {
@@ -50,24 +49,11 @@ export function BookmarkList({
     return Array.from(pathMap.keys()).sort()
   }, [favoriteProjects, regularProjects])
 
-  const { filteredFavorites, filteredRegulars, totalItems } = useMemo(() => {
+  const { filteredFavorites, filteredRegulars } = useMemo(() => {
     let favs = favoriteProjects
     let regs = regularProjects
 
-    // Apply text search filter
-    if (searchText.trim()) {
-      const searchLower = searchText.toLowerCase()
-
-      const filter = (item: Project) => {
-        return item.name.toLowerCase().includes(searchLower)
-          || item.path.toLowerCase().includes(searchLower)
-      }
-
-      favs = favs.filter(filter)
-      regs = regs.filter(filter)
-    }
-
-    // Apply tag filter
+    // Apply tag filter only (text search now handled by List.Item keywords)
     if (selectedTag) {
       const filterByTag = (item: Project) => {
         if (!item.tags || item.tags.length === 0)
@@ -86,9 +72,8 @@ export function BookmarkList({
     return {
       filteredFavorites: favs,
       filteredRegulars: regs,
-      totalItems: favs.length + regs.length,
     }
-  }, [favoriteProjects, regularProjects, searchText, selectedTag])
+  }, [favoriteProjects, regularProjects, selectedTag])
 
   const visibleBookmarks = useMemo(() => {
     return [...filteredFavorites, ...filteredRegulars]
@@ -126,7 +111,6 @@ export function BookmarkList({
   return (
     <List
       isLoading={isLoading || isFaviconsLoading}
-      onSearchTextChange={setSearchText}
       searchBarPlaceholder={searchBarPlaceholder || `Search bookmarks for ${adapter.appName}...`}
       throttle={true}
       searchBarAccessory={
@@ -150,11 +134,11 @@ export function BookmarkList({
           : undefined
       }
     >
-      {totalItems === 0 && !isLoading
+      {filteredFavorites.length === 0 && filteredRegulars.length === 0 && !isLoading
         ? (
             <List.EmptyView
               title="No bookmarks found"
-              description="No bookmarks or no matches"
+              description="No bookmarks"
             />
           )
         : (
@@ -167,6 +151,7 @@ export function BookmarkList({
                       project={item}
                       icon={favicons[item.id] || ''}
                       onToggleFavorite={handleToggleFavorite}
+                      keywords={[item.name, item.path]}
                     />
                   ))}
                 </List.Section>
@@ -180,6 +165,7 @@ export function BookmarkList({
                       project={item}
                       icon={favicons[item.id] || ''}
                       onToggleFavorite={handleToggleFavorite}
+                      keywords={[item.name, item.path]}
                     />
                   ))}
                 </List.Section>

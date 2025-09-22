@@ -1,6 +1,6 @@
 import type { Adapter, Project } from '../../types'
 import { Action, ActionPanel, List, openExtensionPreferences } from '@raycast/api'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect } from 'react'
 import { showErrorToast, showSuccessToast } from '../../logic'
 import { useProjectList } from '../../logic/useProjectList'
 import { WorkspaceListItem } from './WorkspaceListItem'
@@ -14,8 +14,6 @@ export function WorkspaceList({
   adapter,
   searchBarPlaceholder,
 }: WorkspaceListProps) {
-  const [searchText, setSearchText] = useState('')
-
   const {
     favoriteProjects,
     regularProjects,
@@ -32,32 +30,6 @@ export function WorkspaceList({
       )
     }
   }, [error])
-
-  const { filteredFavorites, filteredRegulars, totalItems } = useMemo(() => {
-    if (!searchText.trim()) {
-      return {
-        filteredFavorites: favoriteProjects,
-        filteredRegulars: regularProjects,
-        totalItems: favoriteProjects.length + regularProjects.length,
-      }
-    }
-
-    const searchLower = searchText.toLowerCase()
-
-    const filter = (item: Project) => {
-      return item.name.toLowerCase().includes(searchLower)
-        || item.path.toLowerCase().includes(searchLower)
-    }
-
-    const filteredFavorites = favoriteProjects.filter(filter)
-    const filteredRegulars = regularProjects.filter(filter)
-
-    return {
-      filteredFavorites,
-      filteredRegulars,
-      totalItems: filteredFavorites.length + filteredRegulars.length,
-    }
-  }, [favoriteProjects, regularProjects, searchText])
 
   const handleToggleFavorite = async (project: Project) => {
     const res = await toggleFavorite(project)
@@ -90,39 +62,39 @@ export function WorkspaceList({
   return (
     <List
       isLoading={isLoading}
-      onSearchTextChange={setSearchText}
       searchBarPlaceholder={searchBarPlaceholder || `Search recent projects for ${adapter.appName}...`}
       throttle={true}
     >
-      {totalItems === 0 && !isLoading
+      {favoriteProjects.length === 0 && regularProjects.length === 0 && !isLoading
         ? (
             <List.EmptyView
-              // icon={Icon.MagnifyingGlass}
               title="No projects found"
-              description="No recent projects or no matches"
+              description="No recent projects"
             />
           )
         : (
             <>
-              {filteredFavorites.length > 0 && (
-                <List.Section title="Favorites" subtitle={`${filteredFavorites.length} projects`}>
-                  {filteredFavorites.map(item => (
+              {favoriteProjects.length > 0 && (
+                <List.Section title="Favorites" subtitle={`${favoriteProjects.length} projects`}>
+                  {favoriteProjects.map(item => (
                     <WorkspaceListItem
                       key={item.id}
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
+                      keywords={[item.name, item.path]}
                     />
                   ))}
                 </List.Section>
               )}
 
-              {filteredRegulars.length > 0 && (
-                <List.Section title="Recent Projects" subtitle={`${filteredRegulars.length} projects`}>
-                  {filteredRegulars.map(item => (
+              {regularProjects.length > 0 && (
+                <List.Section title="Recent Projects" subtitle={`${regularProjects.length} projects`}>
+                  {regularProjects.map(item => (
                     <WorkspaceListItem
                       key={item.id}
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
+                      keywords={[item.name, item.path]}
                     />
                   ))}
                 </List.Section>

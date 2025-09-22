@@ -5,6 +5,7 @@ import { showSuccessToast } from '../../logic'
 interface WorkspaceListItemProps {
   project: Project
   onToggleFavorite: (project: Project) => void
+  keywords?: string[]
 }
 
 async function handleCopyPath(path: string) {
@@ -14,6 +15,7 @@ async function handleCopyPath(path: string) {
 export function WorkspaceListItem({
   project,
   onToggleFavorite,
+  keywords,
 }: WorkspaceListItemProps) {
   return (
     <List.Item
@@ -21,6 +23,7 @@ export function WorkspaceListItem({
       icon={project.icon || Icon.Document}
       title={project.name}
       subtitle={project.path}
+      keywords={keywords}
       accessories={project.isFavorite
         ? [{ icon: { source: Icon.Star, tintColor: Color.Yellow }, tooltip: 'Favorite' }]
         : undefined}
