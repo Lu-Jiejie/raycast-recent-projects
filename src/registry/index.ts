@@ -33,4 +33,12 @@ export const appsConfig: AppConfig[] = [
     storagePathDesc: 'Path to "Bookmarks"',
     exePathDesc: 'Path to "msedge.exe"',
   },
+  {
+    id: 'typora',
+    name: 'Typora',
+    type: 'workspace',
+    icon: 'icons/typora.png',
+    storagePathDesc: 'Path to "history.data"',
+    exePathDesc: 'Path to "Typora.exe"',
+  },
 ]

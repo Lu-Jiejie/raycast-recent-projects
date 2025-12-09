@@ -43,6 +43,12 @@
       "title": "Microsoft Edge (Bookmarks)",
       "description": "Quickly open bookmarks in Microsoft Edge.",
       "mode": "view"
+    },
+    {
+      "name": "typora",
+      "title": "Typora (Recent Projects)",
+      "description": "Quickly open recent projects in Typora.",
+      "mode": "view"
     }
   ],
   "scripts": {
@@ -148,6 +154,22 @@
       "name": "edgeExePath",
       "title": "Microsoft Edge [Exe Path]",
       "description": "Path to \"msedge.exe\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "typoraStoragePath",
+      "title": "Typora [Storage Path]",
+      "description": "Path to \"history.data\"",
+      "type": "textfield",
+      "default": "",
+      "required": false
+    },
+    {
+      "name": "typoraExePath",
+      "title": "Typora [Exe Path]",
+      "description": "Path to \"Typora.exe\"",
       "type": "textfield",
       "default": "",
       "required": false

@@ -1,4 +1,5 @@
 import { fetchChromiumBookmarks } from '../fetchers/chrome'
+import { fetchTyporaProjects } from '../fetchers/typora'
 import { fetchVscodeLikeProjects } from '../fetchers/vscode'
 
 export const fetcherMap = {
@@ -6,4 +7,5 @@ export const fetcherMap = {
   cursor: fetchVscodeLikeProjects,
   chrome: fetchChromiumBookmarks,
   edge: fetchChromiumBookmarks,
+  typora: fetchTyporaProjects,
 }
