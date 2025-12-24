@@ -2,7 +2,6 @@ import type { Project } from '../types'
 import { executeSQL } from '@raycast/utils'
 import { exists } from 'fs-extra'
 import { toUnixPath } from '../logic'
-import { resolveAppExePath } from '../logic/resolveAppExePath'
 
 const QUERY = 'SELECT value FROM ItemTable WHERE key = \'history.recentlyOpenedPathsList\';'
 
@@ -55,7 +54,7 @@ export async function fetchVscodeLikeProjects({
         appName,
         name: projectPath.split('/').pop() || projectPath,
         path: projectPath,
-        appExePath: appExePath || await resolveAppExePath(appName),
+        appExePath,
         icon: appIcon,
         id: `${appName}-${projectPath}`,
       })

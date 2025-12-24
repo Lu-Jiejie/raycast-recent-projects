@@ -1,7 +1,7 @@
 import type { Adapter, AppConfig } from '../types'
 import { getPreferenceValues } from '@raycast/api'
 import { fetcherMap } from '../registry/fetcher'
-import { resolveAppExePath } from './resolveAppExePath'
+// import { resolveAppExePath } from './resolveAppExePath'
 
 export function useAdapter(app: AppConfig): Adapter {
   const preferences = getPreferenceValues()
@@ -22,13 +22,14 @@ export function useAdapter(app: AppConfig): Adapter {
         return []
       }
 
-      const exePath = userDefinedExePath || await resolveAppExePath(app.name)
+      const exePath = userDefinedExePath
+      // || await resolveAppExePath(app.name)
 
       return fetcherFn({
         appName: app.name,
         appIcon: app.icon,
         appStoragePath: storagePath,
-        appExePath: exePath,
+        appExePath: exePath || '',
         hideNotExistItems,
       })
     },

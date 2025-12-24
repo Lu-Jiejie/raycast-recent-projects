@@ -34,10 +34,18 @@ export function WorkspaceListItem({
               title={`Open in ${project.appName}`}
               icon={project.icon}
               target={project.path}
-              application={{
-                name: project.appName,
-                path: project.appExePath,
-              }}
+              // application={{
+              //   name: project.appName,
+              //   path: project.appExePath,
+              // }}
+              application={
+                project.appExePath
+                  ? {
+                      name: project.appName,
+                      path: project.appExePath,
+                    }
+                  : project.appName
+              }
             />
             <Action.ShowInFinder
               title="Show in Explorer"
