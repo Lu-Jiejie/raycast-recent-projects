@@ -1,4 +1,5 @@
 import type { Project } from '../../types'
+import { exec } from 'node:child_process'
 import { Action, ActionPanel, Color, Icon, List } from '@raycast/api'
 import { getBranchColor, showSuccessToast } from '../../logic'
 
@@ -12,6 +13,13 @@ interface WorkspaceListItemProps {
 
 async function handleCopyPath(path: string) {
   await showSuccessToast('Copied Project Path', path)
+}
+
+function openInTerminal(path: string, shell: 'cmd' | 'wt') {
+  const cmd = shell === 'wt'
+    ? `wt -d "${path}"`
+    : `start cmd /k "cd /d ${path}"`
+  exec(cmd)
 }
 
 export function WorkspaceListItem({
@@ -72,6 +80,11 @@ export function WorkspaceListItem({
               title="Show in Explorer"
               icon={Icon.Folder}
               path={project.path}
+            />
+            <Action
+              title="Open in Terminal"
+              icon={Icon.Terminal}
+              onAction={() => openInTerminal(project.path, 'wt')}
             />
             <Action.CopyToClipboard
               title="Copy Project Path"
