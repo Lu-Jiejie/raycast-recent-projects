@@ -10,7 +10,7 @@ Recent Projects
 A Raycast extension for quickly accessing your recent projects.
 </p>
 
-<img width="862" src="./assets/example.png">
+<img width="862" alt="" src="./assets/example.png">
 
 > [!IMPORTANT]
 > This extension is totally for Windows users.
@@ -60,12 +60,12 @@ The following are the example paths for each application:
 
 #### Visual Studio Code
 
-+ Storage Path: `C:/Users/USER_NAME/AppData/Roaming/Code/User/globalStorage/storage.json`
++ Storage Path: `C:/Users/USER_NAME/AppData/Roaming/Code/User/sharedStorage/tate.vscdb`
 + Exe Path: `C:/Program Files/Microsoft VS Code/code.exe`
 
 #### Cursor
 
-+ Storage Path: `C:/Users/USER_NAME/AppData/Roaming/Cursor/User/globalStorage/storage.json`
++ Storage Path: `C:/Users/USER_NAME/AppData/Roaming/Cursor/User/globalStorage/tate.vscdb`
 + Exe Path: `C:/Program Files/Cursor/Cursor.exe`
 
 ### Bookmark

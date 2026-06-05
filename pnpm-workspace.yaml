@@ -1,2 +1,9 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
+allowBuilds:
+  esbuild: set this to true or false
+  simple-git-hooks: set this to true or false
 ignoredBuiltDependencies:
   - simple-git-hooks

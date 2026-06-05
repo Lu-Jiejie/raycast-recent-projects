@@ -49,7 +49,7 @@ export function BookmarkListItem({
               content={project.path}
               onCopy={() => handleCopyPath(project.path)}
               shortcut={{
-                windows: { modifiers: ['ctrl'], key: 'c' },
+                Windows: { modifiers: ['ctrl'], key: 'c' },
                 macOS: { modifiers: ['cmd'], key: 'c' },
               }}
             />
