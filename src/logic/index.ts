@@ -1,5 +1,5 @@
 import { exec } from 'node:child_process'
-import { showToast, Toast } from '@raycast/api'
+import { Color, showToast, Toast } from '@raycast/api'
 
 export function execPromise(command: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -47,6 +47,60 @@ export function toWindowsPath(path: string): string {
 
 export function toUnixPath(path: string): string {
   return path.replace(/\\/g, '/')
+}
+
+/*
+ * 常见分支内置颜色映射。
+ * 每个规则：[分支模式数组, Raycast 内置颜色]
+ * 模式支持 * 通配符（如 "feat/*" 匹配 feat/xxx）
+ * 匹配从上到下，命中第一个即返回。
+ * 要新增：在 BRANCH_COLORS 末尾加一行即可。
+ */
+type BranchColorRule = [patterns: string[], color: string]
+
+const BRANCH_COLORS: BranchColorRule[] = [
+  // 🌟 核心分支 (高稳定度/生产环境)
+  [['main', 'master', 'production', 'prod'], Color.Green],
+  [['develop', 'dev'], Color.Blue],
+
+  // 🚀 业务变更与发布
+  [['feat/*', 'feature/*'], Color.Purple],
+  [['release/*', 'rc/*', 'uat/*', 'stg/*', 'staging/*'], Color.Magenta],
+
+  // 🚑 修复类分支 (高警示度)
+  [['fix/*', 'bugfix/*', 'hotfix/*'], Color.Red],
+
+  // 🛠️ 代码质量改善 (移入 Blue)
+  [['refactor/*'], Color.Blue],
+  [['perf/*'], Color.Blue],
+  [['style/*'], Color.Blue],
+
+  // 📝 文档与测试
+  [['docs/*'], Color.Blue],
+  [['test/*'], Color.Yellow],
+
+  // 🤖 工程与依赖 (运维/基础设施变动)
+  [['chore/*', 'ci/*', 'build/*'], Color.Yellow],
+  [['deps/*', 'dependency/*', 'renovate/*'], Color.Yellow],
+
+  // 🧪 实验与草稿 (低调的灰色)
+  [['poc/*', 'exp/*', 'experimental/*'], Color.SecondaryText],
+  [['draft/*', 'wip/*'], Color.SecondaryText],
+]
+
+function matchBranchPattern(branch: string, pattern: string): boolean {
+  if (!pattern.includes('*'))
+    return branch === pattern
+  const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`)
+  return regex.test(branch)
+}
+
+export function getBranchColor(branch: string): string {
+  for (const [patterns, color] of BRANCH_COLORS) {
+    if (patterns.some(p => matchBranchPattern(branch, p)))
+      return color
+  }
+  return getColorForStr(branch)
 }
 
 export function getColorForStr(str: string): string {

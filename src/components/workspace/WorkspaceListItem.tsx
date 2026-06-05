@@ -1,6 +1,6 @@
 import type { Project } from '../../types'
 import { Action, ActionPanel, Color, Icon, List } from '@raycast/api'
-import { getColorForStr, showSuccessToast } from '../../logic'
+import { getBranchColor, showSuccessToast } from '../../logic'
 
 interface WorkspaceListItemProps {
   project: Project
@@ -23,7 +23,7 @@ export function WorkspaceListItem({
 
   if (branch) {
     accessories.push({
-      tag: { value: branch, color: getColorForStr(branch) },
+      tag: { value: branch, color: getBranchColor(branch) },
       tooltip: `Branch: ${branch}`,
     })
   }
