@@ -12,6 +12,7 @@ export interface Project {
   date?: string
   details?: string
   isFavorite?: boolean
+  isHidden?: boolean
 }
 
 export type FavoriteItem = Omit<Project, 'isFavorite'>

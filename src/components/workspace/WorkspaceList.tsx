@@ -1,6 +1,6 @@
 import type { Adapter, Project } from '../../types'
 import { Action, ActionPanel, List, openExtensionPreferences } from '@raycast/api'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { showErrorToast, showSuccessToast } from '../../logic'
 import { useGitBranches } from '../../logic/useGitBranches'
 import { useProjectList } from '../../logic/useProjectList'
@@ -11,21 +11,28 @@ interface WorkspaceListProps {
   searchBarPlaceholder?: string
 }
 
+type Visibility = 'visible' | 'hidden' | 'all'
+
 export function WorkspaceList({
   adapter,
   searchBarPlaceholder,
 }: WorkspaceListProps) {
+  const [visibility, setVisibility] = useState<Visibility>('visible')
+
   const {
     favoriteProjects,
     regularProjects,
+    hiddenProjects,
     isLoading,
     toggleFavorite,
+    toggleHidden,
+    isHidden,
     error,
   } = useProjectList(adapter)
 
   const allProjects = useMemo(
-    () => [...favoriteProjects, ...regularProjects],
-    [favoriteProjects, regularProjects],
+    () => [...favoriteProjects, ...regularProjects, ...hiddenProjects],
+    [favoriteProjects, regularProjects, hiddenProjects],
   )
 
   const branchMap = useGitBranches(allProjects)
@@ -44,6 +51,33 @@ export function WorkspaceList({
     const resText = res ? 'Added to Favorites' : 'Removed from Favorites'
     await showSuccessToast(resText, project.name)
   }
+
+  const handleToggleHidden = async (project: Project) => {
+    const res = await toggleHidden(project)
+    const resText = res ? 'Hidden' : 'Unhidden'
+    await showSuccessToast(resText, project.name)
+  }
+
+  const visibleFavorites = useMemo(
+    () => visibility === 'all' || visibility === 'visible'
+      ? favoriteProjects
+      : favoriteProjects.filter(p => isHidden(p)),
+    [favoriteProjects, visibility, isHidden],
+  )
+
+  const visibleRegulars = useMemo(
+    () => visibility === 'all' || visibility === 'visible'
+      ? regularProjects
+      : regularProjects.filter(p => isHidden(p)),
+    [regularProjects, visibility, isHidden],
+  )
+
+  const visibleHidden = useMemo(
+    () => visibility === 'all' || visibility === 'hidden'
+      ? hiddenProjects
+      : [],
+    [hiddenProjects, visibility],
+  )
 
   if (!adapter.appStoragePath) {
     return (
@@ -72,8 +106,19 @@ export function WorkspaceList({
       isLoading={isLoading}
       searchBarPlaceholder={searchBarPlaceholder || `Search recent projects for ${adapter.appName}...`}
       throttle={true}
+      searchBarAccessory={(
+        <List.Dropdown
+          tooltip="Visibility"
+          value={visibility}
+          onChange={v => setVisibility(v as Visibility)}
+        >
+          <List.Dropdown.Item title="Visible" value="visible" />
+          <List.Dropdown.Item title="Hidden" value="hidden" />
+          <List.Dropdown.Item title="All" value="all" />
+        </List.Dropdown>
+      )}
     >
-      {favoriteProjects.length === 0 && regularProjects.length === 0 && !isLoading
+      {visibleFavorites.length === 0 && visibleRegulars.length === 0 && visibleHidden.length === 0 && !isLoading
         ? (
             <List.EmptyView
               title="No projects found"
@@ -82,13 +127,14 @@ export function WorkspaceList({
           )
         : (
             <>
-              {favoriteProjects.length > 0 && (
-                <List.Section title="Favorites" subtitle={`${favoriteProjects.length} projects`}>
-                  {favoriteProjects.map(item => (
+              {visibleFavorites.length > 0 && (
+                <List.Section title="Favorites" subtitle={`${visibleFavorites.length} projects`}>
+                  {visibleFavorites.map(item => (
                     <WorkspaceListItem
                       key={item.id}
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
+                      onToggleHidden={handleToggleHidden}
                       keywords={[item.name, item.path]}
                       branch={branchMap[item.id]}
                     />
@@ -96,13 +142,29 @@ export function WorkspaceList({
                 </List.Section>
               )}
 
-              {regularProjects.length > 0 && (
-                <List.Section title="Recent Projects" subtitle={`${regularProjects.length} projects`}>
-                  {regularProjects.map(item => (
+              {visibleRegulars.length > 0 && (
+                <List.Section title="Recent Projects" subtitle={`${visibleRegulars.length} projects`}>
+                  {visibleRegulars.map(item => (
                     <WorkspaceListItem
                       key={item.id}
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
+                      onToggleHidden={handleToggleHidden}
+                      keywords={[item.name, item.path]}
+                      branch={branchMap[item.id]}
+                    />
+                  ))}
+                </List.Section>
+              )}
+
+              {visibleHidden.length > 0 && (
+                <List.Section title="Hidden" subtitle={`${visibleHidden.length} projects`}>
+                  {visibleHidden.map(item => (
+                    <WorkspaceListItem
+                      key={item.id}
+                      project={item}
+                      onToggleFavorite={handleToggleFavorite}
+                      onToggleHidden={handleToggleHidden}
                       keywords={[item.name, item.path]}
                       branch={branchMap[item.id]}
                     />

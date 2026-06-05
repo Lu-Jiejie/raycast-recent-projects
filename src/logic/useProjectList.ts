@@ -2,6 +2,7 @@ import type { Adapter, Project } from '../types'
 import { useEffect, useMemo, useState } from 'react'
 import { showErrorToast, withErrorHandling } from '.'
 import { useFavoriteList } from './useFavoriteList'
+import { useHiddenList } from './useHiddenList'
 
 type ProjectListError
   = | { title: 'Failed to Load Recent Projects', message: string }
@@ -17,6 +18,13 @@ export function useProjectList(adapter: Adapter, _type: 'workspace' | 'bookmark'
     isLoading: favoriteListLoading,
     error: favoriteListError,
   } = useFavoriteList()
+
+  const {
+    isHidden,
+    toggleHidden,
+    isLoading: hiddenListLoading,
+    error: hiddenListError,
+  } = useHiddenList()
 
   useEffect(() => {
     let isMounted = true
@@ -62,20 +70,29 @@ export function useProjectList(adapter: Adapter, _type: 'workspace' | 'bookmark'
     }
   }, [favoriteListError])
 
+  useEffect(() => {
+    if (hiddenListError) {
+      showErrorToast(
+        hiddenListError.title,
+        hiddenListError.message,
+      )
+    }
+  }, [hiddenListError])
+
   const groupedProjects = useMemo(() => {
-    // if loading favorites, return empty lists
-    if (favoriteListLoading) {
+    if (favoriteListLoading || hiddenListLoading) {
       return {
         favoriteProjects: [],
         regularProjects: [],
+        hiddenProjects: [],
         isReady: false,
       }
     }
 
-    // combine favorite status and sort if needed
     let enhancedProjects = rawProjects.map(project => ({
       ...project,
       isFavorite: isFavorite(project),
+      isHidden: isHidden(project),
     }))
 
     // sort by date if bookmark type
@@ -100,7 +117,7 @@ export function useProjectList(adapter: Adapter, _type: 'workspace' | 'bookmark'
       })
     }
 
-    const [favoriteProjects, regularProjects] = enhancedProjects.reduce<[Project[], Project[]]>(
+    const [favoriteProjects, regularAndHidden] = enhancedProjects.reduce<[Project[], Project[]]>(
       ([f, r], p) => {
         return p.isFavorite
           ? [[...f, p], r]
@@ -109,18 +126,31 @@ export function useProjectList(adapter: Adapter, _type: 'workspace' | 'bookmark'
       [[], []],
     )
 
+    const [regularProjects, hiddenProjects] = regularAndHidden.reduce<[Project[], Project[]]>(
+      ([v, h], p) => {
+        return p.isHidden
+          ? [v, [...h, p]]
+          : [[...v, p], h]
+      },
+      [[], []],
+    )
+
     return {
       favoriteProjects,
       regularProjects,
+      hiddenProjects,
       isReady: true,
     }
-  }, [rawProjects, isFavorite, adapter.appName, favoriteListLoading])
+  }, [rawProjects, isFavorite, isHidden, adapter.appName, favoriteListLoading, hiddenListLoading])
 
   return {
     favoriteProjects: groupedProjects.favoriteProjects,
     regularProjects: groupedProjects.regularProjects,
-    isLoading: isLoading || favoriteListLoading || !groupedProjects.isReady,
+    hiddenProjects: groupedProjects.hiddenProjects,
+    isLoading: isLoading || favoriteListLoading || hiddenListLoading || !groupedProjects.isReady,
     toggleFavorite,
+    toggleHidden,
+    isHidden,
     error,
   }
 }

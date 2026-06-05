@@ -5,6 +5,7 @@ import { getBranchColor, showSuccessToast } from '../../logic'
 interface WorkspaceListItemProps {
   project: Project
   onToggleFavorite: (project: Project) => void
+  onToggleHidden?: (project: Project) => void
   keywords?: string[]
   branch?: string
 }
@@ -16,6 +17,7 @@ async function handleCopyPath(path: string) {
 export function WorkspaceListItem({
   project,
   onToggleFavorite,
+  onToggleHidden,
   keywords,
   branch,
 }: WorkspaceListItemProps) {
@@ -35,6 +37,13 @@ export function WorkspaceListItem({
     })
   }
 
+  if (project.isHidden) {
+    accessories.push({
+      icon: { source: Icon.EyeDisabled, tintColor: Color.SecondaryText },
+      tooltip: 'Hidden',
+    })
+  }
+
   return (
     <List.Item
       key={project.id}
@@ -50,10 +59,6 @@ export function WorkspaceListItem({
               title={`Open in ${project.appName}`}
               icon={project.icon}
               target={project.path}
-              // application={{
-              //   name: project.appName,
-              //   path: project.appExePath,
-              // }}
               application={
                 project.appExePath
                   ? {
@@ -76,6 +81,11 @@ export function WorkspaceListItem({
                 Windows: { modifiers: ['ctrl'], key: 'c' },
                 macOS: { modifiers: ['cmd'], key: 'c' },
               }}
+            />
+            <Action
+              title={project.isHidden ? 'Unhide' : 'Hide'}
+              icon={project.isHidden ? Icon.Eye : Icon.EyeDisabled}
+              onAction={() => onToggleHidden?.(project)}
             />
             <Action
               title={project.isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
