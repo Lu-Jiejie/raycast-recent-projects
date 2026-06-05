@@ -17,7 +17,7 @@ A Raycast extension for quickly accessing your recent projects.
 
 ## Installation
 
-This extension has not been published to the Raycast Store yet, so you need to install it manually by cloning the repository and running it in development mode.
+This extension has not been published to the Raycast Store yet, so you need to install it manually by cloning the repository and install it in development mode.
 
 You should have [Node.js](https://nodejs.org/en/download/) and [pnpm](https://pnpm.io/installation) installed before installing.
 
@@ -34,11 +34,7 @@ cd raycast-rencent-projects
 pnpm install
 ```
 
-3. Install this extension in Raycast
-
-```bash
-pnpm run dev
-```
+3. Go to Raycast, run `Import Extension` and select the folder
 
 ## Command
 

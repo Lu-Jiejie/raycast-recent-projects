@@ -1,11 +1,12 @@
 import type { Project } from '../../types'
 import { Action, ActionPanel, Color, Icon, List } from '@raycast/api'
-import { showSuccessToast } from '../../logic'
+import { getColorForStr, showSuccessToast } from '../../logic'
 
 interface WorkspaceListItemProps {
   project: Project
   onToggleFavorite: (project: Project) => void
   keywords?: string[]
+  branch?: string
 }
 
 async function handleCopyPath(path: string) {
@@ -16,7 +17,24 @@ export function WorkspaceListItem({
   project,
   onToggleFavorite,
   keywords,
+  branch,
 }: WorkspaceListItemProps) {
+  const accessories: List.Item.Accessory[] = []
+
+  if (branch) {
+    accessories.push({
+      tag: { value: branch, color: getColorForStr(branch) },
+      tooltip: `Branch: ${branch}`,
+    })
+  }
+
+  if (project.isFavorite) {
+    accessories.push({
+      icon: { source: Icon.Star, tintColor: Color.Yellow },
+      tooltip: 'Favorite',
+    })
+  }
+
   return (
     <List.Item
       key={project.id}
@@ -24,9 +42,7 @@ export function WorkspaceListItem({
       title={project.name}
       subtitle={project.path}
       keywords={keywords}
-      accessories={project.isFavorite
-        ? [{ icon: { source: Icon.Star, tintColor: Color.Yellow }, tooltip: 'Favorite' }]
-        : undefined}
+      accessories={accessories.length > 0 ? accessories : undefined}
       actions={(
         <ActionPanel>
           <ActionPanel.Section title="Project Actions">

@@ -1,7 +1,8 @@
 import type { Adapter, Project } from '../../types'
 import { Action, ActionPanel, List, openExtensionPreferences } from '@raycast/api'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { showErrorToast, showSuccessToast } from '../../logic'
+import { useGitBranches } from '../../logic/useGitBranches'
 import { useProjectList } from '../../logic/useProjectList'
 import { WorkspaceListItem } from './WorkspaceListItem'
 
@@ -21,6 +22,13 @@ export function WorkspaceList({
     toggleFavorite,
     error,
   } = useProjectList(adapter)
+
+  const allProjects = useMemo(
+    () => [...favoriteProjects, ...regularProjects],
+    [favoriteProjects, regularProjects],
+  )
+
+  const branchMap = useGitBranches(allProjects)
 
   useEffect(() => {
     if (error) {
@@ -82,6 +90,7 @@ export function WorkspaceList({
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
                       keywords={[item.name, item.path]}
+                      branch={branchMap[item.id]}
                     />
                   ))}
                 </List.Section>
@@ -95,6 +104,7 @@ export function WorkspaceList({
                       project={item}
                       onToggleFavorite={handleToggleFavorite}
                       keywords={[item.name, item.path]}
+                      branch={branchMap[item.id]}
                     />
                   ))}
                 </List.Section>

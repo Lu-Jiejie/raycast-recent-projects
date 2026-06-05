@@ -55,9 +55,27 @@ export function getColorForStr(str: string): string {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)
   }
 
+  /*
+   *  调色参数，只改这 4 个数字：
+   *
+   *       当前值    合法范围    效果
+   *  S ———————————————————————————————————
+   *  饱和度下限    60    0~100    当前范围 [60, 80)。越大颜色越鲜艳
+   *  饱和度浮动    20    0~100    当前波动 ±20。越小颜色越统一
+   *
+   *  亮度下限      40    0~100    当前范围 [40, 60)。越大背景越亮
+   *  亮度浮动      20    0~100    当前波动 ±20。越小亮度越统一
+   *
+   *  约束：下限 ≥ 0，下限 + 浮动 ≤ 100
+   */
+  const S_MIN = 60
+  const S_RANGE = 20
+  const L_MIN = 40
+  const L_RANGE = 20
+
   const h = Math.abs(hash) % 360
-  const s = 60 + (Math.abs(hash) % 20)
-  const l = 40 + (Math.abs(hash) % 20)
+  const s = S_MIN + (Math.abs(hash) % S_RANGE)
+  const l = L_MIN + (Math.abs(hash) % L_RANGE)
 
   return `hsl(${h}, ${s}%, ${l}%)`
 }
